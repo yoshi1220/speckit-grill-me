@@ -1,0 +1,4 @@
+interface:
+  display_name: "SpecKit Grill Me (with Serena)"
+  short_description: "Use Serena to resolve spec ambiguity before planning"
+  default_prompt: "Use $speckit-grill-me to thoroughly clarify the spec before planning."
