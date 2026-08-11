@@ -4,7 +4,7 @@ scripts:
   sh: ../../scripts/bash/check-prerequisites.sh --json --paths-only
 ---
 
-# SpecKit Clarify Grill Me
+# SpecKit Grill Me
 
 Purpose: Detect, reduce, and clarify ambiguities and unresolved decisions in the active feature specification.
 
@@ -337,7 +337,7 @@ After processing the `after_clarify` hook, report:
 - Checklist before/after pass counts, newly passed and regressed items, and items still failing, listed as areas needing attention.
 - Coverage table: show every category's aggregate status as **Resolved** / **Clear** / **Deferred** / **Outstanding**, with a per-point status breakdown for each category. Do not proceed to the completion report if even one Partial / Missing point remains.
 - If Outstanding / Deferred items remain, recommend whether to proceed to the agent-specific invocation of `speckit.plan` or rerun this command later.
-- Suggested next command, normally the agent-specific invocation of `speckit.plan` (for example, `/speckit.plan` or `$speckit-plan`).
+- Suggested next command, normally the agent-specific invocation of `speckit.plan` (for example, `/speckit.plan`, `/speckit-plan`, or `$speckit-plan`).
 
 ## Behavior rules
 

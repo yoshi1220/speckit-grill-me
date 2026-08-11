@@ -1,8 +1,8 @@
 schema_version: "1.0"
 
 extension:
-  id: "clarify"
-  name: "SpecKit Clarify Grill Me"
+  id: "grill"
+  name: "SpecKit Grill Me"
   version: "1.0.0"
   description: "Exhaustively resolve specification ambiguities and decisions before planning."
   category: "process"
@@ -20,7 +20,7 @@ requires:
 
 provides:
   commands:
-    - name: "speckit.clarify.grill-me"
+    - name: "speckit.grill.grill-me"
       file: "commands/grill-me.md"
       description: "Exhaustively clarify an active feature specification before planning."
 

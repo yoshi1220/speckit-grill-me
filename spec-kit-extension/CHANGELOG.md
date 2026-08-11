@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the SpecKit Clarify Grill Me extension are documented in
+All notable changes to the SpecKit Grill Me extension are documented in
 this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -11,7 +11,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### Added
 
 - Initial Community Extension release.
-- Added `speckit.clarify.grill-me`, an exhaustive, dependency-aware
+- Added `speckit.grill.grill-me`, an exhaustive, dependency-aware
   specification clarification command based on the English, Serena-independent
   standalone Skill.
 - Added incremental `spec.md` updates, coverage tracking, checklist
