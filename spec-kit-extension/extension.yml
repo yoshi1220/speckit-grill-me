@@ -1,0 +1,32 @@
+schema_version: "1.0"
+
+extension:
+  id: "grill"
+  name: "SpecKit Grill Me"
+  version: "1.0.0"
+  description: "Exhaustively resolve specification ambiguities and decisions before planning."
+  category: "process"
+  effect: "read-write"
+  author: "yoshi1220"
+  repository: "https://github.com/yoshi1220/speckit-grill-me"
+  homepage: "https://github.com/yoshi1220/speckit-grill-me/tree/main/spec-kit-extension"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=0.16.2"
+  tools:
+    - name: "bash"
+      required: true
+
+provides:
+  commands:
+    - name: "speckit.grill.grill-me"
+      file: "commands/grill-me.md"
+      description: "Exhaustively clarify an active feature specification before planning."
+
+tags:
+  - "clarification"
+  - "requirements"
+  - "specification"
+  - "elicitation"
+  - "workflow"
