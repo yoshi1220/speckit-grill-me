@@ -6,7 +6,12 @@ this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.1] - Unreleased
+## [1.0.1] - 2026-08-25
+
+### Added
+
+- Added `speckit.grill.with-docs`, packaging the English Serena-independent
+  `speckit-grill-with-docs` workflow as a self-contained extension command.
 
 ### Changed
 

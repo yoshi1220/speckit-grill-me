@@ -4,22 +4,22 @@ SpecKit Grill Me is a Spec Kit Community Extension for exhaustively
 resolving ambiguity and open decisions in an active feature specification
 before implementation planning begins.
 
-The extension packages the English, Serena-independent implementation from
-`english/base/speckit-grill-me` without changing the existing standalone
-Skills.
+The extension packages the English, Serena-independent implementations from
+`english/base/speckit-grill-me` and `english/base/speckit-grill-with-docs`
+without changing the existing standalone Skills.
 
-## Command name
+## Commands
 
-- Extension ID: `grill`
-- Command: `me`
-- Canonical command ID: `speckit.grill.me`
-- Codex and other dollar-skills integrations: `$speckit-grill-me`
-- Claude Code and other slash-skills integrations: `/speckit-grill-me`
-- Dotted command integrations: `/speckit.grill.me`
+Extension ID: `grill`
+
+| Command | Canonical command ID | Dollar-skill invocation | Hyphenated slash invocation | Dotted slash invocation |
+| --- | --- | --- | --- | --- |
+| `me` | `speckit.grill.me` | `$speckit-grill-me` | `/speckit-grill-me` | `/speckit.grill.me` |
+| `with-docs` | `speckit.grill.with-docs` | `$speckit-grill-with-docs` | `/speckit-grill-with-docs` | `/speckit.grill.with-docs` |
 
 The core command is `speckit.clarify`; this extension uses the separate `grill`
-namespace and adds `speckit.grill.me`, so it does not replace or
-overwrite any core command.
+namespace and adds `speckit.grill.me` and `speckit.grill.with-docs`, so it does
+not replace or overwrite any core command.
 
 ## What it does
 
@@ -34,10 +34,15 @@ overwrite any core command.
   satisfaction.
 - Revalidates `checklists/requirements.md` and processes the same clarify hook
   points as the core command.
+- With `speckit.grill.with-docs`, synchronizes settled cross-feature canonical
+  terminology and domain knowledge to Markdown documents, and records only
+  qualifying design decisions as ADRs.
 
-The command may modify only the active feature's `spec.md` and checkbox states
-in `checklists/requirements.md`. It does not modify plans, tasks, source code,
-or other files.
+`speckit.grill.me` may modify only the active feature's `spec.md` and checkbox
+states in `checklists/requirements.md`. `speckit.grill.with-docs` may also
+modify its resolved canonical knowledge root, which defaults to
+`docs/domain_knowledge/`. Neither command modifies plans, tasks, source code,
+configuration, or unrelated files.
 
 ## Requirements
 
@@ -59,16 +64,18 @@ specify extension list
 ```
 
 Then verify that your active agent integration exposes the command. For Codex,
-invoke:
+invoke either command:
 
 ```text
 $speckit-grill-me
+$speckit-grill-with-docs
 ```
 
 Optional arguments prioritize an area without limiting the rest of the scan:
 
 ```text
 $speckit-grill-me Focus on authorization boundaries and failure modes.
+$speckit-grill-with-docs Focus on domain terminology and lifecycle boundaries.
 ```
 
 For Claude Code and other integrations that use hyphenated slash skills,
@@ -76,12 +83,14 @@ invoke:
 
 ```text
 /speckit-grill-me
+/speckit-grill-with-docs
 ```
 
 For integrations that use dotted slash commands, invoke:
 
 ```text
 /speckit.grill.me
+/speckit.grill.with-docs
 ```
 
 ## Install from a release asset
@@ -102,14 +111,14 @@ Recommended workflow:
 ```text
 speckit.specify
       ↓
-speckit.grill.me
+speckit.grill.me OR speckit.grill.with-docs
       ↓
 speckit.plan
       ↓
 speckit.tasks
 ```
 
-| Behavior | Core `speckit.clarify` | `speckit.grill.me` |
+| Behavior | Core `speckit.clarify` | `speckit.grill.me` / `speckit.grill.with-docs` |
 | --- | --- | --- |
 | Question budget | Up to 5 | No fixed limit |
 | Progression | Prioritized queue | Dependency-aware frontiers and rounds |
@@ -140,7 +149,8 @@ README.md
 LICENSE
 CHANGELOG.md
 commands/
-└── me.md
+├── me.md
+└── with-docs.md
 ```
 
 Attach the ZIP as a GitHub Release asset. Before publishing, test both the local
@@ -148,22 +158,26 @@ development install and the release-asset URL on a real initialized project.
 
 ## Release test checklist
 
-- The manifest is accepted and `specify extension list` reports one command.
-- The command is generated for each intended agent integration.
+- The manifest is accepted and `specify extension list` reports two commands.
+- Both commands are generated for each intended agent integration.
 - The active feature specification is located successfully.
 - Questions are asked one at a time and accepted answers update `spec.md`.
 - Rescanning and the satisfaction gate complete normally.
 - `checklists/requirements.md`, when present, is revalidated without unrelated
   edits.
 - `before_clarify` and `after_clarify` hooks behave as documented.
+- `speckit.grill.with-docs` resolves its canonical knowledge locations,
+  persists qualifying knowledge, and does not require Serena.
 - The core `speckit.clarify` command remains available.
 - Removing and reinstalling the extension works.
 
 ## Community catalog submission
 
-After publishing and testing the release asset, submit it through the official
+After publishing and testing the release asset, file an update for the existing
+`grill` catalog entry through the official
 [Extension Submission issue template](https://github.com/github/spec-kit/issues/new?template=extension_submission.yml).
-Do not edit `extensions/catalog.community.json` directly.
+Use the new version and download URL, and state that the submission updates an
+existing extension. Do not edit `extensions/catalog.community.json` directly.
 
 Use the following release metadata:
 
@@ -173,10 +187,11 @@ Use the following release metadata:
 - Download URL: the dedicated ZIP release asset above
 - Repository: <https://github.com/yoshi1220/speckit-grill-me>
 - Documentation: <https://github.com/yoshi1220/speckit-grill-me/tree/main/spec-kit-extension>
+- Changelog: <https://github.com/yoshi1220/speckit-grill-me/blob/main/spec-kit-extension/CHANGELOG.md>
 - License: `MIT`
 - Required Spec Kit version: `>=0.16.2`
 - Required tools: Bash on macOS or Linux
-- Commands: 1
+- Commands: 2
 - Hooks provided: 0
 
 ## Origins and attribution

@@ -4,7 +4,7 @@ extension:
   id: "grill"
   name: "SpecKit Grill Me"
   version: "1.0.1"
-  description: "Exhaustively resolve specification ambiguities and decisions before planning."
+  description: "Exhaustively clarify specifications and optionally sync canonical domain knowledge."
   category: "process"
   effect: "read-write"
   author: "yoshi1220"
@@ -23,6 +23,9 @@ provides:
     - name: "speckit.grill.me"
       file: "commands/me.md"
       description: "Exhaustively clarify an active feature specification before planning."
+    - name: "speckit.grill.with-docs"
+      file: "commands/with-docs.md"
+      description: "Clarify a feature specification and sync settled canonical domain knowledge."
 
 tags:
   - "clarification"
