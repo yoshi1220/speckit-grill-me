@@ -1,0 +1,4 @@
+interface:
+  display_name: 'SpecKit Grill With Docs (with Serena)'
+  short_description: '仕様を明確化し確定したドメイン知識を Serena メモリへ同期'
+  default_prompt: '$speckit-grill-with-docs を使い、仕様を明確化しながら確定した知識を Serena メモリへ反映してください。'

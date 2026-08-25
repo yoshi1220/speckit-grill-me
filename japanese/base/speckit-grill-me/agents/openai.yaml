@@ -1,4 +1,4 @@
 interface:
   display_name: 'SpecKit Grill Me'
-  short_description: 'コードと文書を調査し仕様の曖昧さを徹底解消してspecへ反映'
-  default_prompt: '$speckit-grill-me を使い、specをplan前に徹底的に明確化してください。'
+  short_description: 'コードと文書を調査し、計画前に仕様の曖昧さを徹底解消'
+  default_prompt: '$speckit-grill-me を使い、計画前に spec を徹底的に明確化してください。'

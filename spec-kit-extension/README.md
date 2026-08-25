@@ -160,6 +160,8 @@ development install and the release-asset URL on a real initialized project.
 
 - The manifest is accepted and `specify extension list` reports two commands.
 - Both commands are generated for each intended agent integration.
+- Generated command bodies contain the explicit supported Bash prerequisite
+  invocation and no unresolved `{SCRIPT}` placeholder.
 - The active feature specification is located successfully.
 - Questions are asked one at a time and accepted answers update `spec.md`.
 - Rescanning and the satisfaction gate complete normally.

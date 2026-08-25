@@ -18,6 +18,9 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Renamed the extension command from `speckit.grill.grill-me` to
   `speckit.grill.me` to avoid repeating the `grill` namespace in generated
   agent command names.
+- Replaced the unresolved `{SCRIPT}` placeholder with the explicit supported
+  Bash prerequisite command so Markdown and TOML agent registrations execute
+  the same command under Spec Kit 0.16.2.
 
 ## [1.0.0] - 2026-08-11
 

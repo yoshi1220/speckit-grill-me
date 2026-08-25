@@ -13,13 +13,13 @@ disable-model-invocation: true
 
 Purpose: Detect, reduce, and clarify ambiguities and unresolved decisions in the active feature specification.
 
-Following the "Interview discipline (applies to every round)" in this file, perform the same clarification role as `/speckit-clarify`, but without a question limit. Detect ambiguities in spec.md, ask **one question at a time in sequence while managing the questions that can be asked now (the frontier) as rounds**, immediately apply each answer to spec.md, and repeat the rounds **until every decision point has reached one of the final statuses—Clear / Resolved / Outstanding / Deferred—and the user is satisfied**.
+Following the "Interview discipline (applies to every round)" in this file, perform the same clarification role as the core `speckit.clarify` command, but without a question limit. Detect ambiguities in spec.md, ask **one question at a time in sequence while managing the questions that can be asked now (the frontier) as rounds**, immediately apply each answer to spec.md, and repeat the rounds **until every decision point has reached one of the final statuses—Clear / Resolved / Outstanding / Deferred—and the user is satisfied**.
 
 > **See the Glossary for terms such as design tree, question candidate pool, frontier, round, category, decision-point status, aggregate category status, and coverage map.**
 
-**This skill must be able to run as an alternative to `/speckit-clarify` in a macOS / Linux + Bash environment.** In supported environments, preserve compatibility with clarify's artifacts and side effects by producing them in the same form (`## Clarifications`, incorporation into the relevant sections, validation after every write, revalidation of `checklists/requirements.md`, extension-hook processing, and a completion report with coverage). The internal elicitation and convergence algorithm intentionally differs to achieve deeper clarification.
+**This skill must be able to run as an alternative to `speckit.clarify` in a macOS / Linux + Bash environment.** In supported environments, preserve compatibility with clarify's artifacts and side effects by producing them in the same form (`## Clarifications`, incorporation into the relevant sections, validation after every write, revalidation of `checklists/requirements.md`, extension-hook processing, and a completion report with coverage). The internal elicitation and convergence algorithm intentionally differs to achieve deeper clarification.
 
-This compatibility applies to **artifacts and side effects**. It does not mean that this skill supports every runtime environment supported by official SpecKit. Use only the Bash prerequisite script; do not automatically select or fall back to the PowerShell or Python versions.
+This compatibility applies to **artifacts and side effects**. It does not mean that this skill supports every runtime environment supported by official Spec Kit. Use only the Bash prerequisite script; do not automatically select or fall back to the PowerShell or Python versions.
 
 ## Language
 
@@ -36,8 +36,8 @@ If non-empty, treat it as a request to prioritize the specified area for deeper 
 ## Prerequisites
 
 1. Confirm that the environment is macOS / Linux and that the `bash` command, `.specify/scripts/bash/check-prerequisites.sh`, and Serena are available. If not, state that the environment is unsupported and stop. If only Serena is unavailable, recommend the base variant. Do not switch to an alternative PowerShell or Python script.
-2. From the repository root, run `bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only` **exactly once** to obtain `FEATURE_DIR` / `FEATURE_SPEC`. If it does not return JSON, stop and recommend rerunning `/speckit-specify` or checking the active feature environment.
-3. If spec.md does not exist, stop and recommend running `/speckit-specify` first. Do not create a new specification here.
+2. From the repository root, run `bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only` **exactly once** to obtain `FEATURE_DIR` / `FEATURE_SPEC`. If it does not return JSON, stop and recommend rerunning the agent-specific invocation of `speckit.specify` or checking the active feature environment.
+3. If spec.md does not exist, stop and recommend running the agent-specific invocation of `speckit.specify` first. Do not create a new specification here.
 4. Read `.specify/memory/constitution.md` (project principles) if it exists. In addition, read **only the Serena memories relevant to the work at hand**. Pass memory names to `read_memory` without the `.md` suffix, for example `domain/product_domain_knowledge`:
    - Examples
      - `.serena/memories/domain/product_domain_knowledge.md` — domain glossary, stakeholders, and business flows
@@ -50,7 +50,7 @@ If `.specify/extensions.yml` exists, process `hooks.before_clarify` before askin
 
 - Exclude hooks with `enabled: false`; treat an omitted `enabled` as enabled.
 - Do not evaluate hooks with a non-empty `condition`; skip them and leave them to HookExecutor.
-- Replace periods in command names with hyphens (for example, `speckit.git.commit` becomes `/speckit-git-commit`).
+- Invoke hook command IDs using the current agent's command syntax (for example, `speckit.git.commit` may be `/speckit.git.commit`, `/speckit-git-commit`, or `$speckit-git-commit`).
 - `optional: false` → Output `EXECUTE_COMMAND: {command}`, actually invoke that hook in the current agent/session, and wait for it to finish. Do not treat outputting the command as execution.
 - `optional: true` → Only present the command, description, and prompt.
 
@@ -341,12 +341,12 @@ After processing the `after_clarify` hook, report:
 - Path to the updated spec and the sections changed.
 - Checklist before/after pass counts, newly passed and regressed items, and items still failing, listed as areas needing attention.
 - Coverage table: show every category's aggregate status as **Resolved** / **Clear** / **Deferred** / **Outstanding**, with a per-point status breakdown for each category. Do not proceed to the completion report if even one Partial / Missing point remains.
-- If Outstanding / Deferred items remain, recommend whether to proceed to `/speckit-plan` or rerun this skill later.
-- Suggested next command, normally `/speckit-plan`.
+- If Outstanding / Deferred items remain, recommend whether to proceed to the agent-specific invocation of `speckit.plan` or rerun this skill later.
+- Suggested next command, normally the agent-specific invocation of `speckit.plan` (for example, `/speckit.plan`, `/speckit-plan`, or `$speckit-plan`).
 
 ## Behavior rules
 
-- This workflow is expected to finish **before** `/speckit-plan`. If the user explicitly skips it and proceeds, comply after warning that the risk of downstream rework will increase.
+- This workflow is expected to finish **before** `speckit.plan`. If the user explicitly skips it and proceeds, comply after warning that the risk of downstream rework will increase.
 - If no significant ambiguity exists, report "No critical ambiguities detected," provide an aggregate category summary showing all points as Clear, and proceed to the Step 6 satisfaction gate. Do not invent questions.
 - Do not ask speculative questions about the technology stack unless they block functional clarification.
 - This skill may modify only spec.md and `checklists/requirements.md` (and only checkbox states in Step 7). Do not modify plans, tasks, code, or any other file.

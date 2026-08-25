@@ -1,7 +1,5 @@
 ---
 description: "Exhaustively clarify a feature specification and persist canonical domain knowledge before planning."
-scripts:
-  sh: ../../scripts/bash/check-prerequisites.sh --json --paths-only
 ---
 
 # SpecKit Grill With Docs
@@ -31,7 +29,7 @@ If non-empty, treat it as a request to prioritize the specified area for deeper 
 ## Prerequisites
 
 1. Confirm that the environment is macOS / Linux and that both the `bash` command and `.specify/scripts/bash/check-prerequisites.sh` are available. If not, state that the environment is unsupported and stop. Do not switch to an alternative PowerShell or Python script.
-2. From the repository root, run `{SCRIPT}` **exactly once** to obtain `FEATURE_DIR` / `FEATURE_SPEC`. If it does not return JSON, stop and recommend rerunning the agent-specific invocation of `speckit.specify` or checking the active feature environment.
+2. From the repository root, run `bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only` **exactly once** to obtain `FEATURE_DIR` / `FEATURE_SPEC`. If it does not return JSON, stop and recommend rerunning the agent-specific invocation of `speckit.specify` or checking the active feature environment.
 3. If spec.md does not exist, stop and recommend running the agent-specific invocation of `speckit.specify` first. Do not create a new specification here.
 4. Read `.specify/memory/constitution.md` (project principles) if it exists. In addition, inspect **only the existing materials relevant to the work at hand** using ordinary file search, file reading, and symbol search:
    - `README*` / `CONTEXT.md` / `CLAUDE.md` / `AGENTS.md` / `documents/**` / `docs/**` — domain terminology, stakeholders, business flows, and design decisions

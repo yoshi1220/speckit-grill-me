@@ -1,15 +1,19 @@
 ---
 name: speckit-grill-with-docs
 description: Thoroughly clarify a spec-kit feature specification and sync settled project-wide terminology, domain knowledge, and design decisions to ordinary Markdown documents. Use when maintaining docs/domain_knowledge as the default knowledge base without Serena.
+argument-hint: 'Specific areas of the specification to examine (optional)'
+compatibility: 'Requires macOS / Linux, Bash, and a spec-kit project containing a .specify/ directory'
 metadata:
   author: 'yoshi1220'
+user-invocable: true
+disable-model-invocation: true
 ---
 
 # SpecKit Grill With Docs
 
 **Required**: First read `../speckit-grill-me/SKILL.md` in full and follow its instructions.
 
-Run `/speckit-grill-me` as the **base workflow**. Its language rules, prerequisites, extension hooks, glossary, interview discipline, interrupted completion path, Workflow Steps 1–8, behavior rules, artifacts, and completion conditions all remain in force. Terms used here—including decision point, decision-point status, question candidate pool, frontier, round, design tree, and coverage map—have the meanings defined by the base skill.
+Run the sibling `speckit-grill-me` skill as the **base workflow**. Its language rules, prerequisites, extension hooks, glossary, interview discipline, interrupted completion path, Workflow Steps 1–8, behavior rules, artifacts, and completion conditions all remain in force. Terms used here—including decision point, decision-point status, question candidate pool, frontier, round, design tree, and coverage map—have the meanings defined by the base skill.
 
 This skill adds exactly one responsibility: **immediately persist canonical terminology settled during the interview, together with qualifying project-wide business-domain and technical-architecture decisions, to ordinary Markdown documents.** Do not use Serena or `.serena/`, and do not assume either is available.
 
@@ -133,7 +137,7 @@ Add the following to the base Step 8 completion report:
 
 ## Done When
 
-- [ ] Every Done When condition of the base `/speckit-grill-me` is satisfied
+- [ ] Every Done When condition of the base `speckit-grill-me` is satisfied
 - [ ] The workflow used only ordinary file operations and did not depend on Serena or `.serena/`
 - [ ] Settled canonical terminology and domain knowledge have been written to and read back from `CONTEXT_FILE` or topic documents under `KNOWLEDGE_ROOT`, and qualifying business-domain and technical-architecture decisions have been written to and read back from `ADR_DIR`
 - [ ] Every new topic document has a valid relative link from `CONTEXT_FILE`

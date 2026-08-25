@@ -13,13 +13,13 @@ disable-model-invocation: true
 
 目的：アクティブな機能仕様にある曖昧さや未決定事項を検出・削減し、明確化すること。
 
-本ファイルの「面談規律（全ラウンド共通）」に従い、`/speckit-clarify` の仕事を上限なしにやり切る。spec.md の曖昧さを検出し、**いま聞ける質問（フロンティア）をラウンドとして管理しつつ 1 問ずつ順番に**問い、回答を spec.md に即時反映し、**全論点（decision point）が Clear / Resolved / Outstanding / Deferred のいずれかに確定し、ユーザーが納得するまで**ラウンドを繰り返す。
+本ファイルの「面談規律（全ラウンド共通）」に従い、コアの `speckit.clarify` コマンドの仕事を上限なしにやり切る。spec.md の曖昧さを検出し、**いま聞ける質問（フロンティア）をラウンドとして管理しつつ 1 問ずつ順番に**問い、回答を spec.md に即時反映し、**全論点（decision point）が Clear / Resolved / Outstanding / Deferred のいずれかに確定し、ユーザーが納得するまで**ラウンドを繰り返す。
 
 > **※ 用語（設計ツリー / 質問候補一覧 / フロンティア / ラウンド / カテゴリ / 論点状態 / カテゴリ集約状態 / カバレッジマップ 等）については「用語集」を参照。**
 
-**macOS / Linux + Bash 環境で `/speckit-clarify` の代替として実行できることが要件。** 対応環境内では、clarify が生成する成果物・副作用（`## Clarifications` セクション、各セクションへの反映、書き込みごとの検証、`checklists/requirements.md` の再検証、extension hooks の処理、カバレッジ付き完了報告）を同じ形式で生成し、明確化ワークフローの違いは徹底度だけにする。
+**macOS / Linux + Bash 環境で `speckit.clarify` の代替として実行できることが要件。** 対応環境内では、clarify が生成する成果物・副作用（`## Clarifications` セクション、各セクションへの反映、書き込みごとの検証、`checklists/requirements.md` の再検証、extension hooks の処理、カバレッジ付き完了報告）を同じ形式で生成し、明確化ワークフローの違いは徹底度だけにする。
 
-この互換性は**成果物と副作用**に対するものであり、公式 SpecKit の全実行環境に対応する代替を意味しない。前提スクリプトは Bash 版に固定し、PowerShell / Python 版の自動選択やフォールバックは行わない。
+この互換性は**成果物と副作用**に対するものであり、公式 Spec Kit の全実行環境に対応する代替を意味しない。前提スクリプトは Bash 版に固定し、PowerShell / Python 版の自動選択やフォールバックは行わない。
 
 ## 言語設定
 
@@ -36,8 +36,8 @@ $ARGUMENTS
 ## 前提
 
 1. 実行環境が macOS / Linux で、`bash` コマンド、`.specify/scripts/bash/check-prerequisites.sh`、Serena が利用できることを確認する。満たさなければ、このスキルの対応環境外であることを明示して中断する。Serena だけが利用できない場合は base 版を案内し、PowerShell / Python の別スクリプトへ切り替えない。
-2. リポジトリルートで `bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only` を **1 回だけ**実行し、`FEATURE_DIR` / `FEATURE_SPEC` を取得する。JSON が取れなければ中断し、`/speckit-specify` の再実行か feature ブランチ環境の確認を案内する。
-3. spec.md が無ければ中断し、`/speckit-specify`の先行実行を案内する（ここで spec を新規作成しない）。
+2. リポジトリルートで `bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only` を **1 回だけ**実行し、`FEATURE_DIR` / `FEATURE_SPEC` を取得する。JSON が取れなければ中断し、エージェントに応じた `speckit.specify` の呼び出しを再実行するか、feature ブランチ環境を確認するよう案内する。
+3. spec.md が無ければ中断し、エージェントに応じた `speckit.specify` の呼び出しを先に実行するよう案内する（ここで spec を新規作成しない）。
 4. `.specify/memory/constitution.md`（プロジェクト原則）があれば読む。加えて、**作業対象に関係するものだけ** Serena メモリを読む（`read_memory` に渡す名前は `.md` を除いたもの。例: `domain/product_domain_knowledge`）:
    - サンプル
      - `.serena/memories/domain/product_domain_knowledge.md` — ドメイン用語集・ステークホルダー・業務フロー
@@ -50,7 +50,7 @@ $ARGUMENTS
 
 - `enabled: false` のフックは除外（`enabled` 未指定は有効扱い）
 - 非空の `condition` を持つフックは評価せずスキップ（HookExecutor に委ねる）
-- コマンド名のドットはハイフンに変換（例: `speckit.git.commit` → `/speckit-git-commit`）
+- フックのコマンド ID は、現在のエージェントの構文で呼び出す（例: `speckit.git.commit` は `/speckit.git.commit`、`/speckit-git-commit`、`$speckit-git-commit` のいずれか）
 - `optional: false` → `EXECUTE_COMMAND: {command}` を出力し、実際にそのフックを現在のエージェント／セッションで起動して完了を待つ。出力だけで実行済みとみなさない
 - `optional: true` → コマンド・説明・プロンプトを提示するだけ
 
@@ -342,12 +342,12 @@ Step 3 の Step 5 進入ゲートを通過した場合だけ、**更新後の sp
 - 更新した spec のパスと触れたセクション一覧
 - チェックリストの before/after 通過数、新規通過・退行した項目、未通過のまま残った項目（要注意領域として列挙）
 - カバレッジ表 — 全カテゴリの集約状態を **Resolved** / **Clear** / **Deferred** / **Outstanding** のいずれかで示し、カテゴリごとに論点別状態の内訳を併記する。Partial / Missing の論点が 1 件でも残っているなら完了報告へ進まない
-- Outstanding / Deferred が残る場合は、`/speckit-plan` に進むか後で再実行するかの推奨
-- 次コマンドの提案（通常は `/speckit-plan`）
+- Outstanding / Deferred が残る場合は、エージェントに応じた `speckit.plan` の呼び出しへ進むか後で再実行するかの推奨
+- 次コマンドの提案（通常はエージェントに応じた `speckit.plan` の呼び出し。例: `/speckit.plan`、`/speckit-plan`、`$speckit-plan`）
 
 ## Behavior rules
 
-- このワークフローは `/speckit-plan` の**前に**完了している想定。ユーザーが明示的にスキップして先へ進む場合は、下流での手戻りリスクが上がることを警告した上で従う。
+- このワークフローは `speckit.plan` の**前に**完了している想定。ユーザーが明示的にスキップして先へ進む場合は、下流での手戻りリスクが上がることを警告した上で従う。
 - 有意な曖昧さが無ければ「クリティカルな曖昧さは検出されませんでした」と報告し、全論点が Clear であるカテゴリ集約サマリを出して Step 6 の納得ゲートへ進む（無理に質問を作らない）。
 - 機能の明確化をブロックしない限り、技術スタックの推測質問はしない。
 - このスキルが変更してよいのは spec.md と `checklists/requirements.md`（Step 7 のチェックボックス更新のみ）だけ。plan / tasks / コード など他のファイルは変更しない。

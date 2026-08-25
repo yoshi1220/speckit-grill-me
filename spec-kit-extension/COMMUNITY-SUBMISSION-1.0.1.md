@@ -132,9 +132,10 @@ clarification, requirements, specification, elicitation, workflow
    hooks, and enabled status.
 6. Confirmed both commands register for Claude Markdown, Gemini TOML, and
    `.agents` Markdown integrations.
-7. Confirmed the script placeholder resolves to
-   `.specify/scripts/bash/check-prerequisites.sh --json --paths-only` and Gemini
-   receives `{{args}}`.
+7. Confirmed every generated command contains the explicit
+   `bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only`
+   invocation with no unresolved `{SCRIPT}` placeholder, and Gemini receives
+   `{{args}}`.
 8. Executed the published `speckit.grill.with-docs` command against an active
    feature specification. It asked one canonical-term question, incorporated the
    accepted answer into `spec.md`, and created and read back
@@ -155,8 +156,7 @@ clarification, requirements, specification, elicitation, workflow
 
 **Release artifact:**
 
-- SHA-256: `fe9e7c9018bffb2105f06962f8415c0322fbee3a779b9321741addb517eb4493`
-- Tag target: `993952f6b2ceb03b4f8ffdc2277ad591aa1fd76a`
+- SHA-256: `7610eab61cbaccd9f22d12af2caa929c315abf26e66774557cd503654fc1ccb8`
 - Release: <https://github.com/yoshi1220/speckit-grill-me/releases/tag/v1.0.1>
 
 ## Example Usage
@@ -188,7 +188,7 @@ $speckit-grill-with-docs
     "author": "yoshi1220",
     "version": "1.0.1",
     "download_url": "https://github.com/yoshi1220/speckit-grill-me/releases/download/v1.0.1/speckit-grill-me-extension-v1.0.1.zip",
-    "sha256": "fe9e7c9018bffb2105f06962f8415c0322fbee3a779b9321741addb517eb4493",
+    "sha256": "7610eab61cbaccd9f22d12af2caa929c315abf26e66774557cd503654fc1ccb8",
     "repository": "https://github.com/yoshi1220/speckit-grill-me",
     "homepage": "https://github.com/yoshi1220/speckit-grill-me/tree/main/spec-kit-extension",
     "documentation": "https://github.com/yoshi1220/speckit-grill-me/blob/main/spec-kit-extension/README.md",
@@ -232,6 +232,9 @@ This is an update to the existing `grill` catalog entry, not a new extension.
 Version 1.0.1 renames `speckit.grill.grill-me` to `speckit.grill.me` and adds
 `speckit.grill.with-docs`. The new command packages the English base,
 Serena-independent workflow as a self-contained Community Extension command.
+It also uses an explicit Bash prerequisite invocation so the command remains
+executable when an agent registration format does not retain YAML script
+metadata.
 
 Because `extension.yml` is stored under `spec-kit-extension/` in the repository,
 the dedicated GitHub Release asset is used as the download URL. The asset places
