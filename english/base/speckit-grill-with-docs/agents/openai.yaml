@@ -1,0 +1,4 @@
+interface:
+  display_name: 'SpecKit Grill With Docs'
+  short_description: 'Clarify specs and sync canonical domain knowledge'
+  default_prompt: 'Use $speckit-grill-with-docs to clarify the specification and persist settled domain knowledge.'

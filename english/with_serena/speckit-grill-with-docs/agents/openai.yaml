@@ -1,0 +1,4 @@
+interface:
+  display_name: 'SpecKit Grill With Docs (with Serena)'
+  short_description: 'Clarify specs and persist domain decisions with Serena'
+  default_prompt: 'Use $speckit-grill-with-docs to clarify the specification and persist settled knowledge to Serena memories.'

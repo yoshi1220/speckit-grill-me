@@ -3,7 +3,7 @@ schema_version: "1.0"
 extension:
   id: "grill"
   name: "SpecKit Grill Me"
-  version: "1.0.0"
+  version: "1.0.1"
   description: "Exhaustively resolve specification ambiguities and decisions before planning."
   category: "process"
   effect: "read-write"
@@ -20,8 +20,8 @@ requires:
 
 provides:
   commands:
-    - name: "speckit.grill.grill-me"
-      file: "commands/grill-me.md"
+    - name: "speckit.grill.me"
+      file: "commands/me.md"
       description: "Exhaustively clarify an active feature specification before planning."
 
 tags:

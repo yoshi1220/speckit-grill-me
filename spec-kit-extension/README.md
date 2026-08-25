@@ -11,14 +11,14 @@ Skills.
 ## Command name
 
 - Extension ID: `grill`
-- Command: `grill-me`
-- Canonical command ID: `speckit.grill.grill-me`
-- Codex and other dollar-skills integrations: `$speckit-grill-grill-me`
-- Claude Code and other slash-skills integrations: `/speckit-grill-grill-me`
-- Dotted command integrations: `/speckit.grill.grill-me`
+- Command: `me`
+- Canonical command ID: `speckit.grill.me`
+- Codex and other dollar-skills integrations: `$speckit-grill-me`
+- Claude Code and other slash-skills integrations: `/speckit-grill-me`
+- Dotted command integrations: `/speckit.grill.me`
 
 The core command is `speckit.clarify`; this extension uses the separate `grill`
-namespace and adds `speckit.grill.grill-me`, so it does not replace or
+namespace and adds `speckit.grill.me`, so it does not replace or
 overwrite any core command.
 
 ## What it does
@@ -62,26 +62,26 @@ Then verify that your active agent integration exposes the command. For Codex,
 invoke:
 
 ```text
-$speckit-grill-grill-me
+$speckit-grill-me
 ```
 
 Optional arguments prioritize an area without limiting the rest of the scan:
 
 ```text
-$speckit-grill-grill-me Focus on authorization boundaries and failure modes.
+$speckit-grill-me Focus on authorization boundaries and failure modes.
 ```
 
 For Claude Code and other integrations that use hyphenated slash skills,
 invoke:
 
 ```text
-/speckit-grill-grill-me
+/speckit-grill-me
 ```
 
 For integrations that use dotted slash commands, invoke:
 
 ```text
-/speckit.grill.grill-me
+/speckit.grill.me
 ```
 
 ## Install from a release asset
@@ -92,7 +92,7 @@ root. Install the dedicated extension ZIP release asset instead:
 
 ```bash
 specify extension add grill \
-  --from https://github.com/yoshi1220/speckit-grill-me/releases/download/v1.0.0/speckit-grill-me-extension-v1.0.0.zip
+  --from https://github.com/yoshi1220/speckit-grill-me/releases/download/v1.0.1/speckit-grill-me-extension-v1.0.1.zip
 ```
 
 ## Workflow and core clarify comparison
@@ -102,14 +102,14 @@ Recommended workflow:
 ```text
 speckit.specify
       ↓
-speckit.grill.grill-me
+speckit.grill.me
       ↓
 speckit.plan
       ↓
 speckit.tasks
 ```
 
-| Behavior | Core `speckit.clarify` | `speckit.grill.grill-me` |
+| Behavior | Core `speckit.clarify` | `speckit.grill.me` |
 | --- | --- | --- |
 | Question budget | Up to 5 | No fixed limit |
 | Progression | Prioritized queue | Dependency-aware frontiers and rounds |
@@ -128,7 +128,7 @@ From the repository root:
 
 ```bash
 cd spec-kit-extension
-zip -r ../speckit-grill-me-extension-v1.0.0.zip \
+zip -r ../speckit-grill-me-extension-v1.0.1.zip \
   extension.yml README.md LICENSE CHANGELOG.md commands
 ```
 
@@ -140,7 +140,7 @@ README.md
 LICENSE
 CHANGELOG.md
 commands/
-└── grill-me.md
+└── me.md
 ```
 
 Attach the ZIP as a GitHub Release asset. Before publishing, test both the local
@@ -169,7 +169,7 @@ Use the following release metadata:
 
 - ID: `grill`
 - Name: `SpecKit Grill Me`
-- Version: `1.0.0`
+- Version: `1.0.1`
 - Download URL: the dedicated ZIP release asset above
 - Repository: <https://github.com/yoshi1220/speckit-grill-me>
 - Documentation: <https://github.com/yoshi1220/speckit-grill-me/tree/main/spec-kit-extension>

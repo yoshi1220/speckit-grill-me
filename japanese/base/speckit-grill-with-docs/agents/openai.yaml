@@ -1,0 +1,4 @@
+interface:
+  display_name: 'SpecKit Grill With Docs'
+  short_description: '仕様を徹底的に明確化し確定したドメイン知識を文書へ同期'
+  default_prompt: '$speckit-grill-with-docs を使い、仕様を明確化しながら確定した知識を文書へ反映してください。'
