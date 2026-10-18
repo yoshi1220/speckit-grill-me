@@ -1,4 +1,6 @@
 interface:
   display_name: "SpecKit Grill Me"
-  short_description: "Investigate and resolve spec ambiguity before planning"
+  short_description: "Settle consequences and derive concise acceptance scenarios"
   default_prompt: "Use $speckit-grill-me to thoroughly clarify the spec before planning."
+policy:
+  allow_implicit_invocation: false
