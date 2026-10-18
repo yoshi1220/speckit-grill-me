@@ -30,7 +30,7 @@ SpecKit Grill Me は、実装計画へ進む前に機能仕様の曖昧さと未
 
 ## Community Extension
 
-[`spec-kit-extension`](spec-kit-extension/) は、英語・Serena 非依存版を Spec Kit Community Extension `grill` として配布します。リリース 1.0.1 では次の 2 コマンドを提供します。
+[`spec-kit-extension`](spec-kit-extension/) は、英語・Serena 非依存版を Spec Kit Community Extension `grill` として配布します。リリース 1.0.2 では次の 2 コマンドを提供します。
 
 - `speckit.grill.me` — 仕様の徹底的な明確化
 - `speckit.grill.with-docs` — 明確化と正準 Markdown 知識の同期

@@ -3,7 +3,7 @@ schema_version: "1.0"
 extension:
   id: "grill"
   name: "SpecKit Grill Me"
-  version: "1.0.1"
+  version: "1.0.2"
   description: "Exhaustively clarify specifications and optionally sync canonical domain knowledge."
   category: "process"
   effect: "read-write"

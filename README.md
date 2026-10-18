@@ -32,7 +32,7 @@ The language and backend variants reuse the same two skill names. Install only o
 
 ## Community Extension
 
-[`spec-kit-extension`](spec-kit-extension/) packages the English, Serena-independent workflows as the Spec Kit Community Extension `grill`. Release 1.0.1 provides two commands:
+[`spec-kit-extension`](spec-kit-extension/) packages the English, Serena-independent workflows as the Spec Kit Community Extension `grill`. Release 1.0.2 provides two commands:
 
 - `speckit.grill.me` — exhaustive specification clarification
 - `speckit.grill.with-docs` — clarification plus canonical Markdown knowledge synchronization

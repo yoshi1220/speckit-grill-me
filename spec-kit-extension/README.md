@@ -8,6 +8,9 @@ The extension packages the English, Serena-independent implementations from
 `english/base/speckit-grill-me` and `english/base/speckit-grill-with-docs`
 without changing the existing standalone Skills.
 
+Version 1.0.2 is a refinement of these two workflows. It retains the existing
+command IDs, platform requirements, and Serena-independent backend.
+
 ## Commands
 
 Extension ID: `grill`
@@ -23,15 +26,19 @@ not replace or overwrite any core command.
 
 ## What it does
 
-- Scans every material decision point in `spec.md` and tracks its status.
+- Covers every stated goal's six core facets before drilling down and tracks
+  individual decision points in `spec.md`.
 - Investigates facts in the project before asking the user to make a decision.
 - Uses dependency-aware rounds and asks one question at a time.
 - Accepts unlimited free-form answers and drills down when a choice exposes
   another decision.
+- Shows sourced facts, accepted decisions, and explicit assumptions for choices.
+- Applies entailed consequences without redundant questions and asks the user to
+  confirm them at the satisfaction gate.
 - Updates and validates `spec.md` after every accepted answer or established
-  fact.
+  fact, keeping concise numbered requirements and derived acceptance scenarios.
 - Rescans until no meaningful ambiguity remains, then asks for explicit user
-  satisfaction.
+  satisfaction, reporting per-goal coverage and any decisions blocking planning.
 - Revalidates `checklists/requirements.md` and processes the same clarify hook
   points as the core command.
 - With `speckit.grill.with-docs`, synchronizes settled cross-feature canonical
@@ -101,7 +108,7 @@ root. Install the dedicated extension ZIP release asset instead:
 
 ```bash
 specify extension add grill \
-  --from https://github.com/yoshi1220/speckit-grill-me/releases/download/v1.0.1/speckit-grill-me-extension-v1.0.1.zip
+  --from https://github.com/yoshi1220/speckit-grill-me/releases/download/v1.0.2/speckit-grill-me-extension-v1.0.2.zip
 ```
 
 ## Workflow and core clarify comparison
@@ -137,8 +144,11 @@ From the repository root:
 
 ```bash
 cd spec-kit-extension
-zip -r ../speckit-grill-me-extension-v1.0.1.zip \
+zip -r ../speckit-grill-me-extension-v1.0.2.zip \
   extension.yml README.md LICENSE CHANGELOG.md commands
+cd ..
+shasum -a 256 speckit-grill-me-extension-v1.0.2.zip \
+  > speckit-grill-me-extension-v1.0.2.zip.sha256
 ```
 
 The resulting ZIP must have this root layout:
@@ -153,8 +163,10 @@ commands/
 └── with-docs.md
 ```
 
-Attach the ZIP as a GitHub Release asset. Before publishing, test both the local
-development install and the release-asset URL on a real initialized project.
+Attach the ZIP and its SHA-256 file as GitHub Release assets. Before publishing,
+test the local development install and packaged ZIP on an initialized project.
+After publication, test the public release-asset URL before submitting the
+catalog update.
 
 ## Release test checklist
 
@@ -181,11 +193,15 @@ After publishing and testing the release asset, file an update for the existing
 Use the new version and download URL, and state that the submission updates an
 existing extension. Do not edit `extensions/catalog.community.json` directly.
 
+The repository contains release notes in `RELEASE-NOTES-1.0.2.md` and a prepared
+submission in `COMMUNITY-SUBMISSION-1.0.2.md` under `spec-kit-extension/`. Finish
+the pending release and real-project checks in that draft before submitting it.
+
 Use the following release metadata:
 
 - ID: `grill`
 - Name: `SpecKit Grill Me`
-- Version: `1.0.1`
+- Version: `1.0.2`
 - Download URL: the dedicated ZIP release asset above
 - Repository: <https://github.com/yoshi1220/speckit-grill-me>
 - Documentation: <https://github.com/yoshi1220/speckit-grill-me/tree/main/spec-kit-extension>
