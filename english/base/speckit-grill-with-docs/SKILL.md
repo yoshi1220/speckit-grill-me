@@ -1,6 +1,6 @@
 ---
 name: speckit-grill-with-docs
-description: Thoroughly clarify a spec-kit feature specification and sync settled project-wide terminology, domain knowledge, and design decisions to ordinary Markdown documents. Use when maintaining docs/domain_knowledge as the default knowledge base without Serena.
+description: Clarify every stated goal in an existing spec-kit feature specification before planning, derive concise requirements and acceptance scenarios, and sync accepted cross-feature terminology, domain knowledge, and qualifying decisions to ordinary Markdown documents. Use docs/domain_knowledge by default without Serena.
 argument-hint: 'Specific areas of the specification to examine (optional)'
 compatibility: 'Requires macOS / Linux, Bash, and a spec-kit project containing a .specify/ directory'
 metadata:
@@ -13,11 +13,19 @@ disable-model-invocation: true
 
 **Required**: First read `../speckit-grill-me/SKILL.md` in full and follow its instructions.
 
-Run the sibling `speckit-grill-me` skill as the **base workflow**. Its language rules, prerequisites, extension hooks, glossary, interview discipline, interrupted completion path, Workflow Steps 1–8, behavior rules, artifacts, and completion conditions all remain in force. Terms used here—including decision point, decision-point status, question candidate pool, frontier, round, design tree, and coverage map—have the meanings defined by the base skill.
+Run the sibling `speckit-grill-me` skill as the **base workflow**. Its language rules, prerequisites, extension hooks, glossary, interview discipline, interrupted completion path, Workflow Steps 1–8, behavior rules, artifacts, and completion conditions all remain in force. Terms used here—including decision point, decision-point status, question candidate pool, frontier, round, design tree, coverage map, request map, core and derived decisions, settlement by consequence, and grounded and agent-introduced elements—have the meanings defined by the base skill.
 
 This skill adds exactly one responsibility: **immediately persist canonical terminology settled during the interview, together with qualifying project-wide business-domain and technical-architecture decisions, to ordinary Markdown documents.** Do not use Serena or `.serena/`, and do not assume either is available.
 
 For this skill, interpret the base behavior rule that permits changes only to spec.md and `checklists/requirements.md` as also permitting the domain-knowledge documents defined below. The prohibition against changing plans, tasks, code, or configuration remains unchanged.
+
+## Applying the base clarification rules
+
+- Keep the design tree, coverage map, and request map in session only. Cover every stated goal's six core facets before drilling down, and apply the base fact gate, dependency order, frozen rounds, evidence requirements, depth limits, and staged thresholds to domain questions too. A need to populate a knowledge artifact is not evidence for another interview question.
+- Keep numbered requirements, cited verified premises, derived acceptance scenarios, and undecided behavior under Out of Scope and Limitations in `FEATURE_SPEC`. Knowledge artifacts do not replace these records or the base per-goal coverage and planning-readiness checks. Preserve the single Clarifications Q&A per accepted answer; investigated facts and consequences create no additional Q&A. Apply base Step 4A's single-save exception when decisions share a requirement or depend on each other, so the saved spec never contradicts the accepted answer; process independent knowledge items separately.
+- A requirement settled by consequence is not a new user policy decision or a verified unknown fact. Cite its originating accepted decisions and investigated facts in the spec, and do not create a new decision record merely for applying an existing rule. Before the user confirms consequences at the base Step 6 satisfaction gate, their required destination is the spec only; a knowledge update is not yet required to mark those points Resolved. After confirmation, persist any qualifying cross-feature term or rule with the same provenance, verify all affected artifacts, and only then proceed to Step 7. Keep the recording gate for decision records; confirmation alone does not establish a new trade-off.
+- Outstanding / Deferred points, situations noted but not asked, unverified assumptions, and unaccepted hypothetical scenarios are not settled domain knowledge. Keep them in the spec and coverage reports as the base requires. Record an agreed extension with its accepted scope, without turning its planning-deferred internal details into knowledge decisions.
+- On interruption, preserve consequences already saved in the spec and identify them in the completion report as not confirmed at a satisfaction gate. Do not promote them to canonical knowledge without acceptance. Preserve already accepted, saved, and verified knowledge changes. Persistence failures still follow the failure-handling rules below.
 
 ## Document location and initialization
 
@@ -110,7 +118,7 @@ A decision passes the recording gate only when all three conditions hold: (1) re
 
 Updating the spec and the knowledge documents is not a single transaction. If saving or verifying one side of the spec-and-knowledge update, one side of the topic-document-and-`CONTEXT_FILE`-index update, or one side of a new-and-superseded ADR update fails, attach the auxiliary state **Persistence incomplete** to the affected decision point and stop.
 
-Persistence incomplete is not a base decision-point status. Keep the design-tree and coverage-map status Partial until every required file has been saved and verified; do not change it to Resolved.
+Persistence incomplete is not a base decision-point status. If the point was already Resolved, including before a post-confirmation consequence update, preserve its settled value separately and return both its design-tree node and coverage status to Partial in the same operation. Keep the design-tree and coverage-map status Partial until every required file has been saved and verified; do not change it to Resolved.
 
 - On stopping, report the affected decision point, settled content, files already saved and verified, files not yet updated or verified, failure details, and the next recovery operation.
 - On resumption, save and verify the incomplete side before asking a new question. Reread the saved side as well and check for duplicates or new conflicts.
@@ -119,7 +127,7 @@ Persistence incomplete is not a base decision-point status. Keep the design-tree
 
 ## Additional in-session discipline
 
-- **Raise a conflict with canonical terminology at the first opportunity.** Include a conflict found while constructing a question in that question; if an answer exposes the conflict, add a follow-up to a later round.
+- **Raise a conflict with canonical terminology at the first opportunity.** Follow the base conflict-confirmation discipline whether the conflict is found while constructing a question or in an answer: reopen the affected point, preserve its old value, announce the conflict, and put one confirmation decision first in the next round. Do not bundle it with a separate domain decision or insert it into the frozen current frontier.
 - **Resolve ambiguous or overloaded language to a canonical term.** Confirm which concept is intended, normalize the spec after its meaning and boundary are settled, and immediately update the knowledge document when required.
 - **Probe concept boundaries with concrete scenarios.** Explicitly identify a scenario as hypothetical, and do not persist it as fact or decision before acceptance.
 - **Cross-check against code.** When the user's explanation, knowledge documents, and implementation differ, show the primary implementation evidence and ask for confirmation. Do not silently align requirements or canonical documents to the implementation.
@@ -134,6 +142,7 @@ Add the following to the base Step 8 completion report:
 - Paths of documents created or updated and their type (context entry point, topic document, or ADR)
 - A summary of terms, concepts, and decisions added or changed
 - Decision points explicitly raised because they conflicted with recorded information, and whether each was resolved or held
+- Consequences confirmed at the satisfaction gate and promoted to knowledge, with their originating decisions or facts; distinguish any consequences left unconfirmed on interruption
 
 ## Done When
 
@@ -145,6 +154,7 @@ Add the following to the base Step 8 completion report:
 - [ ] Source conflicts have been resolved or terminally classified according to the authority rules and the base conflict discipline
 - [ ] Any decision retained despite a constitution conflict is Deferred with a reason, and the conflicting content has not been persisted as settled information
 - [ ] No implementation fact from Step 4B was promoted to a design decision without user acceptance
+- [ ] The base request coverage, evidence, consequence, numbered-requirement, and acceptance-scenario rules were followed; no unconfirmed consequence or undecided behavior was promoted to canonical knowledge, and every required post-confirmation knowledge update was verified before Step 7
 - [ ] No decision point has Persistence incomplete; every point became Resolved only after the spec and all required knowledge documents were saved and verified
 - [ ] No canonical definition is managed in both the spec and knowledge documents, while the spec retains enough context to be understood and validated on its own
 - [ ] The completion report includes the documents changed and summaries of the terms and decisions recorded

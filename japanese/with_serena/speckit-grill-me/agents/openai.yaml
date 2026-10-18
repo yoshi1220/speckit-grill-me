@@ -1,4 +1,6 @@
 interface:
   display_name: 'SpecKit Grill Me (with Serena)'
-  short_description: 'Serenaでコードと文書を調査し、計画前に仕様の曖昧さを徹底解消'
+  short_description: 'Serena で全目標を確認し、帰結と受入シナリオを仕様へ反映'
   default_prompt: '$speckit-grill-me を使い、Serena で調査しながら計画前に spec を徹底的に明確化してください。'
+policy:
+  allow_implicit_invocation: false

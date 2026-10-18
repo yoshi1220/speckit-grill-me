@@ -1,6 +1,6 @@
 ---
 name: speckit-grill-with-docs
-description: When Serena is available in a spec-kit project, resolve ambiguity in the current feature specification through unlimited question rounds and persist settled cross-feature terminology and qualifying domain or architecture decisions to Serena memories. Continue until every decision point has a final status and the user agrees.
+description: When Serena is available in a spec-kit project, clarify every stated goal before planning, derive concise requirements and acceptance scenarios, and persist accepted cross-feature terminology and qualifying domain or architecture decisions to Serena memories.
 argument-hint: 'Specific areas of the specification to examine (optional)'
 compatibility: 'Requires macOS / Linux, Bash, Serena, and a spec-kit project containing a .specify/ directory'
 metadata:
@@ -13,11 +13,19 @@ disable-model-invocation: true
 
 **Required**: First read `../speckit-grill-me/SKILL.md` in full and follow its instructions.
 
-Run the sibling `speckit-grill-me` skill as the **base workflow**. Its language rules, prerequisites, extension hooks, glossary, interview discipline, interrupted completion path, Workflow Steps 1–8, behavior rules, artifacts, and completion conditions all remain in force, including artifact parity as an alternative to the core `speckit.clarify` command. Terms used here—including decision point, decision-point status, question candidate pool, frontier, round, design tree, and coverage map—have the meanings defined in the base glossary.
+Run the sibling `speckit-grill-me` skill as the **base workflow**. Its language rules, prerequisites, extension hooks, glossary, interview discipline, interrupted completion path, Workflow Steps 1–8, behavior rules, artifacts, and completion conditions all remain in force, including artifact parity as an alternative to the core `speckit.clarify` command. Terms used here—including decision point, decision-point status, question candidate pool, frontier, round, design tree, coverage map, request map, core and derived decisions, settlement by consequence, and grounded and agent-introduced elements—have the meanings defined in the base glossary.
 
 This skill adds exactly one responsibility: **immediately and correctly persist terminology settled during the interview, together with qualifying business-domain and technical-architecture decisions, to Serena memories.** Every additional rule below exists to support that responsibility.
 
 For this skill, interpret the base behavior rule that permits changes only to spec.md and `checklists/requirements.md` as also permitting the memories in the table below. The prohibition against changing plans, tasks, code, or other files remains unchanged.
+
+## Applying the base clarification rules
+
+- Keep the design tree, coverage map, and request map in session only. Cover every stated goal's six core facets before drilling down, and apply the base fact gate, dependency order, frozen rounds, evidence requirements, depth limits, and staged thresholds to domain questions too. A need to populate a knowledge artifact is not evidence for another interview question.
+- Keep numbered requirements, cited verified premises, derived acceptance scenarios, and undecided behavior under Out of Scope and Limitations in `FEATURE_SPEC`. Knowledge artifacts do not replace these records or the base per-goal coverage and planning-readiness checks. Preserve the single Clarifications Q&A per accepted answer; investigated facts and consequences create no additional Q&A. Apply base Step 4A's single-save exception when decisions share a requirement or depend on each other, so the saved spec never contradicts the accepted answer; process independent knowledge items separately.
+- A requirement settled by consequence is not a new user policy decision or a verified unknown fact. Cite its originating accepted decisions and investigated facts in the spec, and do not create a new decision record merely for applying an existing rule. Before the user confirms consequences at the base Step 6 satisfaction gate, their required destination is the spec only; a knowledge update is not yet required to mark those points Resolved. After confirmation, persist any qualifying cross-feature term or rule with the same provenance, verify all affected artifacts, and only then proceed to Step 7. Keep the recording gate for decision records; confirmation alone does not establish a new trade-off.
+- Outstanding / Deferred points, situations noted but not asked, unverified assumptions, and unaccepted hypothetical scenarios are not settled domain knowledge. Keep them in the spec and coverage reports as the base requires. Record an agreed extension with its accepted scope, without turning its planning-deferred internal details into knowledge decisions.
+- On interruption, preserve consequences already saved in the spec and identify them in the completion report as not confirmed at a satisfaction gate. Do not promote them to canonical knowledge without acceptance. Preserve already accepted, saved, and verified knowledge changes. Persistence failures still follow the failure-handling rules below.
 
 ## Write destinations
 
@@ -64,7 +72,7 @@ Use the following authoritative source for each type of content.
 
 - Do not maintain the same content as a **canonical definition** in both the spec body and a memory. Put canonical definitions of cross-feature terminology only in Serena memory. The spec may use the term and contain the minimum context and feature-specific constraints needed to understand and validate the feature, but it must not duplicate or redefine the canonical definition. For decisions, write only feature-specific requirements and consequences in the spec and only cross-feature rationale and trade-offs in the decision-record memory. Clarifications Q&A lines required by base Step 4A are audit records, so they do not count as duplicate canonical management and must not be omitted.
 - When the same settled matter belongs in both a glossary or concept memory and a decision-record memory, put only the current meaning, boundary, and business rules in the glossary or concept memory, and only the adoption rationale, alternatives, and trade-offs in the decision record. Do not duplicate the same explanation as canonical information; use a `mem:<name>` reference when useful.
-- Persist to Serena memory **immediately whenever an item is settled**, just as with the spec. If one answer settles several terms or decisions, write and save each item separately rather than as a batch.
+- Persist to Serena memory **immediately whenever an item is settled**, just as with the spec. If one answer settles several independent terms or decisions, write and save each item separately rather than as a batch.
 - When one settled item requires several artifacts, process them in this order: (1) spec, (2) glossary or current-domain-knowledge memory, (3) business-domain decision-record memory, (4) technical-architecture decision-record memory, and (5) read-back verification of every affected artifact. Skip artifact types that are not needed and mark the decision point Resolved only after all required operations succeed.
 - When an item settled in Step 4A also qualifies for memory, save and verify the spec first, then save and read back the corresponding memory before marking the decision point Resolved or moving to the next question. If memory saving or verification fails, do not mark it Resolved and do not fall back to another location; stop. When the content is feature-specific only, preserve the base Step 4A order.
 - Do not promote an implementation fact established only through base Step 4B into a business-domain or technical-architecture decision in Serena memory. If the fact suggests a new cross-feature design decision should be recorded, add it to the question candidate pool as a decision for the user and write it only after acceptance.
@@ -73,7 +81,7 @@ Use the following authoritative source for each type of content.
 
 Updating the spec and Serena memories is not a single transaction. If saving or verifying any required artifact fails after another artifact was saved, attach the auxiliary persistence state **Persistence incomplete** to the decision point and stop.
 
-Persistence incomplete is not a base decision-point status. Keep the affected design-tree and coverage-map status Partial until both the spec and all required Serena memories have been saved and verified; do not change it to Resolved.
+Persistence incomplete is not a base decision-point status. If the point was already Resolved, including before a post-confirmation consequence update, preserve its settled value separately and return both its design-tree node and coverage status to Partial in the same operation. Keep the affected design-tree and coverage-map status Partial until both the spec and all required Serena memories have been saved and verified; do not change it to Resolved.
 
 Treat answer acceptance, saving the spec, saving and verifying memory, and marking the point Resolved as distinct states.
 
@@ -85,9 +93,9 @@ Treat answer acceptance, saving the spec, saving and verifying memory, and marki
 
 ## In-session domain discipline added to `speckit-grill-me`
 
-- **Raise a conflict with the domain glossary immediately.** For example: "The domain glossary defines Cancellation as X, but the current usage appears to mean Y. Which is intended?" Raise it in the first round where it is noticed. Include a conflict discovered while constructing a question in that question; if an answer exposes it, add a follow-up to the question candidate pool for a later round. When a conflict is detected, tell the user in one line that it will be confirmed in a later round.
+- **Raise a conflict with the domain glossary immediately.** Follow the base conflict-confirmation discipline whether the conflict is found while constructing a question or in an answer: reopen the affected point, preserve its old value, announce the conflict, and put one confirmation decision first in the next round. For example, ask whether to retain the glossary's definition of Cancellation as X or adopt the new meaning Y. Do not bundle it with a separate domain decision or insert it into the frozen current frontier.
 - **Resolve ambiguous or overloaded language to one canonical term.** When a term in the user's answer or spec may refer to several concepts, add a question that confirms which concept is intended, ask it in a round, and replace the wording with one project-canonical term. For example, if "account" could mean either a customer or a login identity, ask which concept is intended.
-- **Settle concept boundaries with concrete scenarios.** When the relationship between two concepts matters, create a concrete boundary scenario rather than asking only in the abstract, add it to the candidate pool, and ask what should happen. Derive the boundary from the answer. For example, for Return and Loan, ask how equipment returned but not yet inspected is treated if it is loaned again.
+- **Settle concept boundaries with concrete scenarios.** Use only situations grounded in a stated goal, investigated fact, or accepted answer, and apply the base candidate, depth, and threshold rules. Label an illustrative scenario as hypothetical; do not persist it as fact or decision before acceptance. For example, if the materials describe equipment being loaned again before return inspection, use that situation to clarify the boundary between Return and Loan.
 - **Cross-check against code.** When the user's explanation conflicts with implementation, add a follow-up that shows the conflict. Treat code as the primary source for current implementation facts, but when it differs from memory, follow the conflict discipline rather than silently overwriting memory or the spec.
 - **Update the domain glossary as soon as a term is settled.** Record the term's definition—its meaning and boundary, canonical spelling, and synonyms to avoid. Do not write implementation details; the glossary is neither a specification nor working notes. Write only content accepted and settled by the user, never a held answer or premise from a hypothetical scenario.
 - **Create a decision record only when all three conditions in the separation table are met.** If any condition is absent, do not create one.
@@ -101,6 +109,7 @@ Add the following to the `speckit-grill-me` Step 8 completion report:
 - Paths of memories written, distinguishing updates from new memories
 - A summary of terms and decisions added or changed
 - Decision points explicitly raised because they conflicted with recorded decisions, when any
+- Consequences confirmed at the satisfaction gate and promoted to knowledge, with their originating decisions or facts; distinguish any consequences left unconfirmed on interruption
 
 ## Done When
 
@@ -109,6 +118,7 @@ Add the following to the `speckit-grill-me` Step 8 completion report:
 - [ ] Source conflicts have been resolved or terminally classified according to the authority rules and the base conflict discipline
 - [ ] Any decision retained despite a constitution conflict is Deferred with a reason, and the conflicting content has not been persisted as settled information
 - [ ] No implementation fact from Step 4B was promoted to a decision in Serena memory without user acceptance
+- [ ] The base request coverage, evidence, consequence, numbered-requirement, and acceptance-scenario rules were followed; no unconfirmed consequence or undecided behavior was promoted to canonical knowledge, and every required post-confirmation knowledge update was verified before Step 7
 - [ ] No decision point has Persistence incomplete; every point became Resolved only after both the spec and every required Serena memory were saved and verified
 - [ ] No canonical definition is managed in both spec.md and Serena memory, while spec.md retains enough context to be understood and validated on its own
 - [ ] The completion report includes memories written and summaries of the terms and decisions recorded
