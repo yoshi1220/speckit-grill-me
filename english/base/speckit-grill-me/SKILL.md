@@ -19,7 +19,7 @@ Following the "Interview discipline (applies to every round)" in this file, perf
 
 **This skill must be able to run as an alternative to `speckit.clarify` in a macOS / Linux + Bash environment.** In supported environments, preserve compatibility with clarify's artifacts and side effects by producing them in the same form (`## Clarifications`, incorporation into the relevant sections, validation after every write, revalidation of `checklists/requirements.md`, extension-hook processing, and a completion report with coverage). The internal elicitation and convergence algorithm intentionally differs to achieve deeper clarification.
 
-This compatibility applies to **artifacts and side effects**. It does not mean that this skill supports every runtime environment supported by official Spec Kit. Use only the Bash prerequisite script; do not automatically select or fall back to the PowerShell or Python versions.
+This compatibility applies to **artifacts and side effects**. It does not mean that this command supports every runtime environment supported by official Spec Kit. Use only the Bash or PowerShell prerequisite script; do not automatically select or fall back to the Python versions.
 
 ## Language
 
@@ -35,8 +35,8 @@ If non-empty, treat it as a request to prioritize the specified area for deeper 
 
 ## Prerequisites
 
-1. Confirm that the environment is macOS / Linux and that both the `bash` command and `.specify/scripts/bash/check-prerequisites.sh` are available. If not, state that the environment is unsupported and stop. Do not switch to an alternative PowerShell or Python script.
-2. From the repository root, run `bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only` **exactly once** to obtain `FEATURE_DIR` / `FEATURE_SPEC`. If it does not return JSON, stop and recommend rerunning the agent-specific invocation of `speckit.specify` or checking the active feature environment.
+1. Confirm that the `.specify/scripts/bash/check-prerequisites.sh` or `.specify/scripts/powershell/check-prerequisites.ps1` are available. If not, state that the environment is unsupported and stop. Do not switch to an alternative Python script.
+2. From the repository root, run `bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only` or `pwsh .specify/scripts/powershell/check-prerequisites.ps1  --json --paths-only` **exactly once** to obtain `FEATURE_DIR` / `FEATURE_SPEC`. If it does not return JSON, stop and recommend rerunning the agent-specific invocation of `speckit.specify` or checking the active feature environment.
 3. If spec.md does not exist, stop and recommend running the agent-specific invocation of `speckit.specify` first. Do not create a new specification here.
 4. Read `.specify/memory/constitution.md` (project principles) if it exists. In addition, inspect **only the existing materials relevant to the work at hand** using ordinary file search, file reading, and symbol search:
    - `README*` / `CONTEXT.md` / `CLAUDE.md` / `AGENTS.md` / `documents/**` / `docs/**` — domain terminology, stakeholders, business flows, and design decisions
