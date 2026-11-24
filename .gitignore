@@ -45,3 +45,6 @@ $RECYCLE.BIN/
 
 # NFS temporary files
 .nfs*
+
+# Local evaluation environments and results
+/evaluations/
