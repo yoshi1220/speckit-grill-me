@@ -2,7 +2,7 @@
 name: speckit-grill-me
 description: Clarify an existing spec-kit feature specification through focused choice questions that cover every stated goal before drilling down, settle logical consequences without asking, cite sourced facts and explicit assumptions, and leave concise numbered requirements with derived acceptance scenarios. Use before planning.
 argument-hint: 'Specific areas of the specification to examine (optional)'
-compatibility: 'Requires macOS / Linux, Bash, and a spec-kit project containing a .specify/ directory'
+compatibility: 'Requires macOS / Linux, Bash, Python 3.9+, and a spec-kit project containing a .specify/ directory'
 metadata:
   author: 'yoshi1220'
 user-invocable: true
@@ -43,6 +43,7 @@ If non-empty, treat it as a request to prioritize the specified area for deeper 
    - Related existing specs / plans / ADRs — existing requirements, constraints, and accepted or rejected decisions
    - Source code / schemas / migrations / models / interfaces / tests — implemented behavior, data shapes, and boundary conditions
    - Package / build / CI/CD / deployment configuration — technology stack, runtime environment, external integrations, and operational constraints
+5. Confirm that Python 3.9+ is available for the bundled session helper. After locating the spec, initialize the graph once as described in [Using the decision graph](references/decision-graph.md). Keep the returned path for the entire interview, including across tool calls. Use it whenever the tree or coverage map changes.
 
 ### Extension hooks (same processing as clarify)
 
@@ -60,14 +61,14 @@ The following terms apply throughout this file. All subsequent steps rely on the
 
 ### Design tree
 
-An in-session tree that connects unresolved decisions remaining in the spec through parent-child dependencies. Use it to manage interview progress; do not write it to a file.
+The session GraphML file connects decision points through directed parent-to-child dependencies. A decision can have several prerequisites. Each node has a stable ID independent of its categories. Its coverage status also serves as its tree status.
 
 - **Node** — One decision. Its session status is either working unresolved (Partial / Missing in coverage), settled (Resolved), or terminally held (Outstanding / Deferred). A terminal hold closes the decision for this interview; it does not mean the product decision itself has been made. A node becomes settled through a user answer or a fact established by investigation.
 - **Branch** — A dependency in which a child decision becomes meaningful only after its parent decision is settled. For example, until "Does the scope include X?" (parent) is decided, "What should the X list display?" (child) cannot be answered.
 
 Each item in the question candidate pool is a question intended to settle one decision in this tree. The initial tree takes shape when the candidates created in Step 1 are associated with nodes in Step 2. Thereafter, add a corresponding decision node whenever a candidate is added to the pool, and update node status whenever an answer or fact is settled. Do not create and freeze the tree only once at the beginning.
 
-Whenever a parent node is settled, reassess in both directions whether each of its descendants—not only its immediate children—still applies under the parent's result, or whether a previously inapplicable decision has become applicable again. Before changing a descendant to inapplicable or terminally held because of a parent dependency, preserve its current status, settled value, and question candidate as separate "resumption information."
+Use the helper’s descendant review after a parent changes. Whenever a parent node is settled, reassess in both directions whether each of its descendants—not only its immediate children—still applies under the parent's result, or whether a previously inapplicable decision has become applicable again. Before changing a descendant to inapplicable or terminally held because of a parent dependency, preserve its current status, settled value, and question candidate as separate "resumption information."
 
 Do not delete descendants that no longer apply. Keep each as a **Resolved node with the settled result "Not applicable"**, and perform all of the following in the same operation:
 
@@ -151,7 +152,7 @@ For example, if Performance is Resolved, Observability is Outstanding, Security 
 
 ### Coverage map
 
-A list associating the semantic identity of every decision point (category, decision target, and applicable scope) with its current status, settled result or hold rationale, and the aggregate status of its category. Create it during the initial ambiguity scan in Step 1 and update it whenever an answer or investigated fact is incorporated or a status changes. Maintain the same list during rescans in Step 5; do not recreate it. Like the design tree, keep it only in session and do not write it to a file. Update a design-tree node and its corresponding coverage status in the same operation. Never return a node to working unresolved while leaving its coverage status as Clear / Resolved / Outstanding / Deferred; if an old status or value is needed, preserve it separately from current status. Evaluate completion by per-point status. At the satisfaction gate in Step 6, present aggregate category statuses and a per-point summary of Outstanding / Deferred items. In the completion report in Step 8, output aggregate statuses for every category and per-point breakdowns.
+A view of the session graph associating each decision ID with its decision target, applicable scope, reporting categories, current status, and settled result or hold rationale. The helper derives each category’s aggregate from the same nodes. Create it during the initial ambiguity scan in Step 1 and update it whenever an answer or investigated fact is incorporated or a status changes. Maintain the same list during rescans in Step 5; do not recreate it. Store each decision once, even when it contributes to several categories. Read the helper’s current revision before updating it. Never return a node to working unresolved while leaving its coverage status as Clear / Resolved / Outstanding / Deferred; if an old status or value is needed, preserve it separately from current status. Evaluate completion by per-point status. At the satisfaction gate in Step 6, present aggregate category statuses and a per-point summary of Outstanding / Deferred items. In the completion report in Step 8, output aggregate statuses for every category and per-point breakdowns.
 
 ### Request map
 
@@ -263,7 +264,7 @@ Whenever candidates are added to the question candidate pool, apply the **fact g
 
 Apply the threshold at its current stage (see the threshold definition in Step 5) to every candidate that remains a decision after passing the fact gate; a core decision always passes it. Remove any candidate that does not pass it—at stage 1, one whose answer, regardless of the outcome, would not change implementation, data model, task breakdown, test design, UX behavior, operations, or compliance validation. Settle a removed candidate by consequence where the rule allows; otherwise change the corresponding point to Outstanding or Deferred, record it under Out of Scope and Limitations when it leaves a stated goal's behavior undefined, and recalculate aggregate category status.
 
-Associate each remaining decision candidate with the design-tree node it will settle and, through the request map, with its stated goal and depth. Move candidates with **no unresolved prerequisites** from the pool to the frontier, leaving all others in the pool. Sort the frontier as the interview discipline requires: core decisions first across all stated goals—decisions that constrain several others ahead of the rest, then by impact × uncertainty—followed by derived decisions by depth and then by the impact of their stated goal. Number it according to the Question format.
+Associate each remaining decision candidate with the design-tree node it will settle and, through the request map, with its stated goal and depth. Intersect candidates that passed the fact and impact gates with the helper’s `dependency_ready` IDs. At frontier calculation, move candidates with **no unresolved prerequisites** from the pool to the frontier, leaving all others in the pool. Sort the frontier as the interview discipline requires: core decisions first across all stated goals—decisions that constrain several others ahead of the rest, then by impact × uncertainty—followed by derived decisions by depth and then by the impact of their stated goal. Number it according to the Question format.
 
 ### Step 3. Round loop
 
@@ -285,7 +286,7 @@ After each round—or if the frontier was empty during the initial Step 2—eval
    - If the parent is Deferred, terminally hold as Deferred, with reasons, all descendants that cannot be settled without it. If the parent is Outstanding but has descendants that affect implementation or validation strategy, reopen the parent as Partial and restore its candidate. If the descendants also have no material impact, terminally hold them as Outstanding.
    - If a self-dependency or circular dependency is detected, rebuild the branches because the dependency graph is wrong. If investigated facts alone cannot establish an order, reposition the most upstream decision as a root candidate with no dependency. Do not rescan while retaining a cycle.
    - After changing statuses, recalculate the design tree and aggregate category statuses.
-4. Proceed to Step 5 **only when the question candidate pool is empty, no factual research or blocked candidates remain, and every decision point is Clear / Resolved / Outstanding / Deferred**. If these conditions are not met and no actionable candidate can be restored, terminally classify the remaining in-progress points as Deferred with reasons, then evaluate this gate again.
+4. Run the graph helper’s `check` and reconcile any open or unreviewed IDs. Proceed to Step 5 **only when the question candidate pool is empty, no factual research or blocked candidates remain, and every decision point is Clear / Resolved / Outstanding / Deferred**. If these conditions are not met and no actionable candidate can be restored, terminally classify the remaining in-progress points as Deferred with reasons, then evaluate this gate again.
 
 ### Step 4. Incorporation procedure: update spec.md immediately
 
@@ -320,7 +321,7 @@ Step 4 does not run sequentially after Step 3. Invoke Step 4A from Step 3 whenev
 2. If new content invalidates older ambiguous text, **replace** it rather than appending a duplicate. Leave no conflicting obsolete text. When a later decision qualifies an existing requirement—adds an exception, a condition, or a further case—amend that requirement in place under its identifier rather than adding a second requirement that overrides it from elsewhere; add a new identifier only for a new rule.
 3. **Derive an acceptance check from each settled decision that defines behavior, a boundary, or a failure outcome of a stated goal.** Add it under Acceptance Criteria as a numbered scenario (for example SC-004) on one line stating the setup, the action, and the observable result with the fewest quantities that distinguish it, and cite the decision it verifies. Merge scenarios that differ only in their numbers. Do not write scenarios for exclusions or out-of-scope items; Out of Scope and Limitations records those. A stated prohibition—an action that must be refused—is a constraint, not an exclusion: verify it with a scenario showing the refusal. Use only accepted values; example quantities are allowed when labeled as examples and the result does not depend on the specific number. A check adds no requirement: if it would need a threshold, target, or capability that has not been accepted, do not write it—create a question candidate for that value instead, offering "no numeric target" as a choice.
 4. **Save spec.md after every incorporation.** Edit in place—insert or replace only the affected lines—rather than rewriting the file, and confirm that the saved diff touches only the intended lines. Do not reorder unrelated sections or alter their heading hierarchy. Keep additions minimal and testable.
-5. **Validate after every save**, and run one final full pass after the last round:
+5. **Validate after every save**, and run one final full pass after the last round. Commit the corresponding graph batch only after the spec passes these checks. If that graph update fails, reconcile it with the saved spec before the next question without repeating a saved Clarifications entry.
    - For Step 4A, re-read the saved file and count the Clarifications lines; there must be exactly one non-duplicated line per accepted answer. If the count differs from the number of answers accepted so far, repair it before presenting the next question. For Step 4B, ensure Clarifications has no diff.
    - Ensure requirement and scenario identifiers are unique within the spec and increase within their section, that no requirement is overridden by a requirement in another section, and that a superseded decision's requirements and scenarios were updated in the same operation.
    - Ensure all records of one stated goal, quantities and workflow states alike, are ordered by one basis, or that the spec states which basis applies where and an acceptance scenario exercises the combination.
@@ -335,7 +336,7 @@ Step 4 does not run sequentially after Step 3. Invoke Step 4A from Step 3 whenev
 Only after passing the Step 5 entry gate in Step 3, **repeat the Step 1 detection scan against the updated spec.md**, because answers can expose new ambiguities and derived decision points. Rescan **as strictly as the initial run and as though reading the updated spec for the first time**, but do not reset point statuses. Reconcile differences into the existing coverage map in this order:
 
 1. Preserve semantic identity, current status, settled result or hold rationale, and dependencies for every point from before the rescan.
-2. Match every detected point to existing points by semantic identity. Treat different wording as the same point when it has the same decision target and applicable scope; do not recreate it as new.
+2. Read `show` and compare each finding with existing IDs across **all** categories. Match the decision target and applicable scope, including actor, operation, and conditions. Reuse the ID for a paraphrase, updating the reporting categories if warranted. Keep independently selectable decisions separate. Route contradictory evidence about the same point to conflict confirmation on its existing ID.
 3. Preserve status and rationale for existing Clear / Resolved / Outstanding / Deferred points when the updated spec supports the recorded result and introduces no new scope, boundary condition, or conflict. If a new conflict is detected, do not silently overwrite the recorded final status; send it to the conflict-confirmation flow in "If a conflict with a recorded decision is detected."
 4. Classify only genuinely new points with no existing match as Clear / Partial / Missing, and create candidates from new Partial / Missing points. If an existing point is no longer present in the main text, do not delete it automatically: apply the Design tree non-applicability rules if a parent decision made it inapplicable; otherwise treat it as a conflict candidate.
 5. Recalculate aggregate category statuses after reconciling the differences.
@@ -379,7 +380,7 @@ If `FEATURE_DIR/checklists/requirements.md` exists, perform the following. If it
 
 ### Step 8. Completion report
 
-After processing the `after_clarify` hook, report:
+Build coverage from the graph’s final `show`, and run `check` before completing the normal path. Use `check --interrupted` on interruption, which may occur before the initial scan. Report any categories not yet assessed at interruption as unassessed. After processing the `after_clarify` hook and collecting the report data, close the temporary session, then report:
 
 - Completion type (normal / user interruption). For an interruption, include where it occurred and that no post-interruption question or answer was incorporated.
 - Number of rounds, questions presented, and accepted answers. Count accepted answers from the saved Clarifications rather than from memory, and state separately any question that was skipped, deferred, or asked again as a follow-up; optionally include a per-round breakdown. The question-and-answer list may refer to Clarifications. List requirements settled by consequence separately.
@@ -395,7 +396,7 @@ After processing the `after_clarify` hook, report:
 - This workflow is expected to finish **before** `speckit.plan`. If the user explicitly skips it and proceeds, comply after warning that the risk of downstream rework will increase.
 - If no significant ambiguity exists, report "No critical ambiguities detected," provide an aggregate category summary showing all points as Clear, and proceed to the Step 6 satisfaction gate. Do not invent questions.
 - Do not ask speculative questions about the technology stack unless they block functional clarification.
-- This skill may modify only spec.md and `checklists/requirements.md` (and only checkbox states in Step 7). Do not modify plans, tasks, code, or any other file.
+- Project writes are limited to spec.md and checkbox states in `checklists/requirements.md` in Step 7. The helper keeps interview state in its private temporary directory outside the project. Close it on completion, user interruption after reporting data is collected, or an early exit after initialization.
 
 ## Done When
 
