@@ -45,3 +45,8 @@ $RECYCLE.BIN/
 
 # NFS temporary files
 .nfs*
+
+# Local evaluation environments and results
+/evaluations/
+/AGENTS.override.md
+/.agents/
