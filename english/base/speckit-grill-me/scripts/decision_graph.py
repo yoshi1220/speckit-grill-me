@@ -184,7 +184,12 @@ def apply_batch(nodes, revision, review, batch):
                     del point[slot]
                 else:
                     raise ValueError(f"{point_id}: no snapshot {slot} to release")
-        point.update({k: change[k] for k in (FIELDS | {"parents"}) & change.keys()})
+        for key in (FIELDS | {"parents"}) & change.keys():
+            value = change[key]
+            # XML readers normalize CR and CRLF to LF, including inside a decision's identity.
+            if isinstance(value, str):
+                value = value.replace("\r\n", "\n").replace("\r", "\n")
+            point[key] = value
         if not create:
             if point["parents"] != old["parents"]:
                 changed_links.add(point_id)

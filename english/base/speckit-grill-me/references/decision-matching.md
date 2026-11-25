@@ -15,8 +15,8 @@ The helper reads every stored node’s target and scope from the current GraphML
 
 Review the original passages for the shortlisted and other plausible matches. For example, if `D001` covers refund approval before settlement, `N1` can reuse it if the spec uses “reimbursement” for that operation. Keep `N2` separate if its rule can differ after settlement.
 
-- For a confirmed match, reuse the stable graph ID, preserve its status and dependencies, and retain all applicable reporting categories and request-map links. Resolve a reference to an earlier incoming finding to its retained graph ID. Allocate a new decision ID only for an independent decision.
-- Apply the reconciled changes with the revision returned by `match`. If the revision is stale, rerun the match and reconcile with the latest graph. Route conflicting evidence about an existing decision through conflict confirmation on its original ID. Only confirmed decision relationships belong in the dependency graph.
+- For a confirmed match, reuse the stable graph ID and retain all applicable reporting categories and request-map links. Keep the recorded status and dependencies while the evidence still supports them. Resolve a reference to an earlier incoming finding to its retained graph ID. Allocate a new decision ID only for an independent decision.
+- Apply the reconciled changes with the revision returned by `match`. A batch that only confirms existing entries needs no write. If the revision is stale, rerun the match and reconcile with the latest graph. Route conflicting evidence about an existing decision through conflict confirmation on its original ID. Only confirmed decision relationships belong in the dependency graph.
 
 The helper keeps vectors in memory. By default it uses word and character TF-IDF vectors with Python's standard library. This mode ranks shared wording. When the project defines two terms as synonyms, use its canonical term in both descriptions and check the original wording when reviewing the match.
 

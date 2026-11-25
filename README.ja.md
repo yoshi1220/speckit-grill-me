@@ -26,6 +26,8 @@ SpecKit Grill Me は、実装計画へ進む前に機能仕様の曖昧さと未
 
 すべての版が macOS / Linux + Bash を対象とし、`.specify/` を含む Spec Kit プロジェクト構成を必要とします。`speckit-grill-with-docs` は同じ親ディレクトリにある `speckit-grill-me` も必要です。`with_serena` 版は Serena も必要です。
 
+英語の通常ファイル版では、一時的な判断グラフの管理とベクトル検索に Python 3.9 以上を使用します。
+
 言語とバックエンドが異なる版でも同じ 2 つの Skill 名を使います。同じ Skill 探索ルートには、各 Skill 名につき 1 つの版だけをインストールしてください。各版は併用するものではなく、用途に応じて置き換える選択肢です。
 
 ## Community Extension

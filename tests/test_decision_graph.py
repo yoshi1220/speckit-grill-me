@@ -139,6 +139,31 @@ class Interview(unittest.TestCase):
         self.apply(resolve("D002", "Recorded (FR-2)."), reviewed=["D003"])
         self.assertEqual(self.run_ok("show")["dependency_ready"], ["D003"])
 
+    def test_duplicate_after_xml_newline_normalization_is_rejected_atomically(self):
+        for newline in ["\r", "\r\n"]:
+            with self.subTest(newline=newline):
+                points = [new("D001", "Set owner", "Pending" + newline + "request", FUNCTIONAL),
+                          new("D002", "Set owner", "Pending\nrequest", EDGE)]
+                failed = invoke("apply", self.graph, batch={"revision": 0, "points": points})
+                self.assertNotEqual(failed.returncode, 0)
+                self.assertIn("same target and scope", failed.stderr)
+                self.assertEqual(self.run_ok("show")["revision"], 0)
+        self.apply(new("D001", "Set owner", "Pending\r\nrequest", FUNCTIONAL))
+        self.assertEqual(self.run_ok("show")["nodes"]["D001"]["scope"], "Pending\nrequest")
+
+    def test_interruption_preserves_holds_and_requires_descendant_review(self):
+        self.apply(new("D001", "Allow delegation", "Requests", FUNCTIONAL),
+                   new("D002", "Record delegate", "History", DATA, "D001"),
+                   dict(new("D003", "Send notice", "Email", EDGE), status="Outstanding",
+                        detail="Outside the stated goal", candidate=""))
+        stopped = [{"id": i, "status": "Deferred", "candidate": "", "detail": "User interruption"}
+                   for i in ("D001", "D002")]
+        self.assertEqual(self.apply(*stopped), ["D002"])
+        self.assertNotEqual(invoke("check", self.graph, "--interrupted").returncode, 0)
+        self.apply(reviewed=["D002"])
+        self.assertTrue(self.run_ok("check", "--interrupted")["complete"])
+        self.assertEqual(self.run_ok("show")["nodes"]["D003"]["status"], "Outstanding")
+
     def test_match_uses_live_nodes_and_earlier_findings_without_writing(self):
         incoming = [{"id": "N1", "text": "Refund approval before settlement"},
                     {"id": "N2", "text": "Approval of refunds before settlement"}]

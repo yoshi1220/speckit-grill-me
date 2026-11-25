@@ -28,6 +28,8 @@ This is not an official project of GitHub or Matt Pocock and does not imply endo
 
 All variants target macOS / Linux + Bash and require a Spec Kit project containing a `.specify/` directory. A `speckit-grill-with-docs` variant also requires the sibling `speckit-grill-me` variant. The `with_serena` variants additionally require Serena.
 
+The English ordinary-file base workflow requires Python 3.9+ for its temporary decision graph and built-in vector matching.
+
 The language and backend variants reuse the same two skill names. Install only one variant of each skill name in a given skill-discovery root; treat the alternatives as replacements, not as side-by-side skills.
 
 ## Community Extension
