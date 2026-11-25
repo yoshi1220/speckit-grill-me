@@ -6,6 +6,22 @@ this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3]
+
+### Added
+
+- Both commands can shortlist related decision points with TF-IDF using the
+  Python 3 standard library, or with a local Model2Vec model for paraphrases.
+  When Python is unavailable, the interview compares the source passages directly.
+
+### Changed
+
+- Reuse a decision ID across categories, goals, and rescans after confirming
+  the target and scope. Preserve holds until their reasons change.
+- Count accepted answers from Q&A entries added during the current interview.
+- Recover incomplete knowledge updates using the saved specification and
+  canonical documents, checking user confirmation for derived requirements.
+
 ## [1.0.2] - 2026-10-18
 
 ### Changed
@@ -51,6 +67,7 @@ The command IDs, supported platforms, and required tools remain unchanged.
 - Added incremental `spec.md` updates, coverage tracking, checklist
   revalidation, and clarify-compatible extension-hook processing.
 
+[1.0.3]: https://github.com/yoshi1220/speckit-grill-me/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/yoshi1220/speckit-grill-me/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/yoshi1220/speckit-grill-me/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/yoshi1220/speckit-grill-me/releases/tag/v1.0.0

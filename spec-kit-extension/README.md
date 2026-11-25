@@ -8,8 +8,9 @@ The extension packages the English, Serena-independent implementations from
 `english/base/speckit-grill-me` and `english/base/speckit-grill-with-docs`
 without changing the existing standalone Skills.
 
-Version 1.0.2 is a refinement of these two workflows. It retains the existing
-command IDs, platform requirements, and Serena-independent backend.
+Version 1.0.3 includes two commands that match decision points
+across goals, categories, and rescans. They share a helper installed under
+`.specify/extensions/grill/` in the target project.
 
 ## Commands
 
@@ -27,7 +28,9 @@ not replace or overwrite any core command.
 ## What it does
 
 - Covers every stated goal's six core facets before drilling down and tracks
-  individual decision points in `spec.md`.
+  individual decision points in session. Settled requirements are saved in `spec.md`.
+- Shortlists similar decisions and checks their source text and scope before
+  reusing a session ID. Independently answerable decisions keep separate IDs.
 - Investigates facts in the project before asking the user to make a decision.
 - Uses dependency-aware rounds and asks one question at a time.
 - Accepts unlimited free-form answers and drills down when a choice exposes
@@ -58,7 +61,12 @@ configuration, or unrelated files.
 - macOS or Linux
 - Bash and `.specify/scripts/bash/check-prerequisites.sh`
 
-Serena is not required.
+Both commands can run the interview without Python by comparing the source
+passages directly. The optional TF-IDF matcher uses only the Python 3 standard
+library. To compare paraphrases using learned embeddings, install `model2vec` in the
+Python environment and set `GRILL_ME_VECTOR_MODEL` to a local Model2Vec
+directory suited to the specification’s language. The model loads offline.
+If the model cannot score a batch, the helper uses TF-IDF for that batch.
 
 ## Install for local development
 
@@ -104,12 +112,16 @@ For integrations that use dotted slash commands, invoke:
 
 Because the extension lives below `spec-kit-extension/` in this repository, a
 GitHub-generated tag archive does not place `extension.yml` at the archive
-root. Install the dedicated extension ZIP release asset instead:
+root. Choose the dedicated ZIP from the [published releases](https://github.com/yoshi1220/speckit-grill-me/releases).
+After publication, install v1.0.3 with the following command.
 
 ```bash
 specify extension add grill \
-  --from https://github.com/yoshi1220/speckit-grill-me/releases/download/v1.0.2/speckit-grill-me-extension-v1.0.2.zip
+  --from https://github.com/yoshi1220/speckit-grill-me/releases/download/v1.0.3/speckit-grill-me-extension-v1.0.3.zip
 ```
+
+To upgrade an existing `grill` installation, add `--force` to the same command.
+Run `specify extension list` to confirm version `1.0.3`.
 
 ## Workflow and core clarify comparison
 
@@ -138,17 +150,44 @@ using a more exhaustive elicitation algorithm. It is an alternative for cases
 where reducing downstream rework is more important than minimizing interview
 time.
 
-## Build the release asset
+## Publish version 1.0.3
 
-From the repository root:
+### 1. Tag the extension release commit
+
+Merge the complete `spec-kit-extension/` package into `main`, including the
+1.0.3 manifest, both commands, the matching guide, and the helper. From the
+root of a clean checkout of the intended release commit, review the committed
+manifest and file list before tagging.
 
 ```bash
-cd spec-kit-extension
-zip -r ../speckit-grill-me-extension-v1.0.2.zip \
-  extension.yml README.md LICENSE CHANGELOG.md commands
-cd ..
-shasum -a 256 speckit-grill-me-extension-v1.0.2.zip \
-  > speckit-grill-me-extension-v1.0.2.zip.sha256
+git show HEAD:spec-kit-extension/extension.yml
+git ls-tree -r --name-only HEAD -- spec-kit-extension/
+```
+
+If `v1.0.3` already points to this release commit, use the existing tag. If it
+identifies a standalone-only release, keep that tag and choose a scoped tag
+such as `grill-v1.0.3` for the extension. In that case, update the tag in the
+commands and release links throughout the 1.0.3 documents before committing
+them. Use `1.0.3` as the version in both the manifest and the submission form.
+
+For a new `v1.0.3` tag, run:
+
+```bash
+git tag -a v1.0.3 -m "SpecKit Grill Me 1.0.3" HEAD
+git push origin refs/tags/v1.0.3
+```
+
+### 2. Build the dedicated ZIP and checksum
+
+Run from the same repository root. The archive reads the files recorded in the tag.
+
+```bash
+git -C spec-kit-extension archive --format=zip \
+  v1.0.3 -- extension.yml README.md LICENSE CHANGELOG.md \
+  commands/me.md commands/with-docs.md references/decision-matching.md \
+  scripts/decision_neighbors.py > speckit-grill-me-extension-v1.0.3.zip
+shasum -a 256 speckit-grill-me-extension-v1.0.3.zip \
+  > speckit-grill-me-extension-v1.0.3.zip.sha256
 ```
 
 The resulting ZIP must have this root layout:
@@ -161,19 +200,22 @@ CHANGELOG.md
 commands/
 ├── me.md
 └── with-docs.md
+references/decision-matching.md
+scripts/decision_neighbors.py
 ```
 
-Attach the ZIP and its SHA-256 file as GitHub Release assets. Before publishing,
-test the local development install and packaged ZIP on an initialized project.
-After publication, test the public release-asset URL before submitting the
-catalog update.
+Inspect the file list with `unzip -Z1 speckit-grill-me-extension-v1.0.3.zip`.
+For a manual check of the packaged files before publication, extract the ZIP
+and use its directory with `specify extension add --dev` in an initialized project.
 
-## Release test checklist
+#### Manual checks on a real project
 
 - The manifest is accepted and `specify extension list` reports two commands.
 - Both commands are generated for each intended agent integration.
 - Generated command bodies contain the explicit supported Bash prerequisite
   invocation and no unresolved `{SCRIPT}` placeholder.
+- Both generated commands can read the installed matching guide, and the helper accepts its JSON example.
+- A rescan reuses the ID for the same decision and keeps separate IDs when the scope changes.
 - The active feature specification is located successfully.
 - Questions are asked one at a time and accepted answers update `spec.md`.
 - Rescanning and the satisfaction gate complete normally.
@@ -185,32 +227,35 @@ catalog update.
 - The core `speckit.clarify` command remains available.
 - Removing and reinstalling the extension works.
 
-## Community catalog submission
+### 3. Publish the GitHub Release
 
-After publishing and testing the release asset, file an update for the existing
-`grill` catalog entry through the official
-[Extension Submission issue template](https://github.com/github/spec-kit/issues/new?template=extension_submission.yml).
-Use the new version and download URL, and state that the submission updates an
-existing extension. Do not edit `extensions/catalog.community.json` directly.
+After the manual checks, publish from the release checkout. This command uses
+the pushed tag, the prepared release notes, and both generated assets.
 
-The repository contains release notes in `RELEASE-NOTES-1.0.2.md` and a prepared
-submission in `COMMUNITY-SUBMISSION-1.0.2.md` under `spec-kit-extension/`. Finish
-the pending release and real-project checks in that draft before submitting it.
+```bash
+gh release create v1.0.3 --verify-tag --title "SpecKit Grill Me v1.0.3" \
+  --notes-file spec-kit-extension/RELEASE-NOTES-1.0.3.md \
+  speckit-grill-me-extension-v1.0.3.zip speckit-grill-me-extension-v1.0.3.zip.sha256
+```
 
-Use the following release metadata:
+Download the ZIP and checksum from the public release into an empty directory.
+There, run `shasum -a 256 -c speckit-grill-me-extension-v1.0.3.zip.sha256` and
+check for `OK`. In an initialized project, repeat the installation using the
+exact URL in [Install from a release asset](#install-from-a-release-asset).
 
-- ID: `grill`
-- Name: `SpecKit Grill Me`
-- Version: `1.0.2`
-- Download URL: the dedicated ZIP release asset above
-- Repository: <https://github.com/yoshi1220/speckit-grill-me>
-- Documentation: <https://github.com/yoshi1220/speckit-grill-me/tree/main/spec-kit-extension>
-- Changelog: <https://github.com/yoshi1220/speckit-grill-me/blob/main/spec-kit-extension/CHANGELOG.md>
-- License: `MIT`
-- Required Spec Kit version: `>=0.16.2`
-- Required tools: Bash on macOS or Linux
-- Commands: 2
-- Hooks provided: 0
+### 4. Submit the community catalog update
+
+Once the public URL installs successfully, file a **new Extension Submission
+issue** for the existing `grill` entry. Copy the fields from the submission
+draft, including the version `1.0.3`, the tag-pinned ZIP URL, and the results
+of your manual checks. Spec Kit calculates `sha256` from the public ZIP.
+If you also include the optional digest in the JSON, use the verified 1.0.3 value.
+[Submission draft](https://github.com/yoshi1220/speckit-grill-me/blob/v1.0.3/spec-kit-extension/COMMUNITY-SUBMISSION-1.0.3.md) · [Official issue form](https://github.com/github/spec-kit/issues/new?template=extension_submission.yml)
+
+A Spec Kit maintainer applies the `extension-submission` label. The upstream
+workflow validates the release and opens a draft catalog PR for maintainer
+review. After it merges, use `specify extension search grill` to find the
+updated entry. [Official publishing guide](https://github.github.com/spec-kit/extensions/publishing.html)
 
 ## Origins and attribution
 
