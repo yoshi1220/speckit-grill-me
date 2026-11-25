@@ -10,8 +10,8 @@ from collections import Counter
 from pathlib import Path
 
 
-# Question scaffolding is frequent in decision descriptions but says little about scope.
-QUESTION_WORDS = frozenset("a an the is are do does should can may what when where which who how".split())
+# Keep interrogatives and modals: "who", "when", and "must" can change the decision.
+STOP_WORDS = frozenset("a an the is are do does".split())
 
 
 def read_batch(payload):
@@ -39,17 +39,20 @@ def read_batch(payload):
 
 
 def lexical_scores(texts):
-    """Build unit TF-IDF vectors over words and within-word character trigrams."""
+    """Build unit TF-IDF vectors over words, comparison operators, and character trigrams."""
     counts = []
     frequency = Counter()
     for text in texts:
         terms = Counter()
-        for word in re.findall(r"[^\W_]+", unicodedata.normalize("NFKC", text).casefold()):
-            if word in QUESTION_WORDS:
+        normalized = unicodedata.normalize("NFKC", text).casefold()
+        for token in re.findall(r"[^\W_]+|!=|[<>=≤≥≠]+", normalized):
+            if token in STOP_WORDS:
                 continue
-            terms[("word", word)] += 1
-            for start in range(len(word) - 2):
-                terms[("gram", word[start:start + 3])] += 1
+            terms[("token", token)] += 1
+            for start in range(len(token) - 2):
+                terms[("gram", token[start:start + 3])] += 1
+        if not terms:
+            terms[("literal", normalized.strip())] = 1
         counts.append(terms)
         frequency.update(terms.keys())
 
@@ -77,10 +80,15 @@ def scorer(texts):
             if not path.is_dir():
                 raise ValueError("expected a local model directory")
             os.environ["HF_HUB_OFFLINE"] = "1"
+            import numpy as np
             from model2vec import StaticModel
 
             model = StaticModel.from_pretrained(path, normalize=True)
             vectors = model.encode(texts)
+            if not np.isfinite(vectors).all():
+                raise ValueError("model returned non-finite vectors")
+            if not vectors.any(axis=1).all():
+                raise ValueError("model returned a zero vector")
             return "model2vec", lambda i: vectors[:i] @ vectors[i]
         except Exception as error:
             print(f"Local embeddings unavailable ({error}). Using TF-IDF.", file=sys.stderr)
@@ -93,10 +101,11 @@ def neighbors(payload):
     results = {}
     for i in range(first_incoming, len(ids)):
         scores = score_previous(i)
-        matches = sorted(range(i), key=lambda j: -scores[j])
+        matches = [j for j, score in enumerate(scores) if score > 0]
+        matches.sort(key=lambda j: (texts[j] != texts[i], -scores[j]))
         results[ids[i]] = [
-            {"id": ids[j], "cosine": round(float(scores[j]), 5)}
-            for j in matches[:3] if scores[j] > 0
+            {"id": ids[j], "cosine": float(f"{min(1.0, scores[j]):.5g}")}
+            for j in matches[:3]
         ]
     return {"backend": backend, "neighbors": results}
 
