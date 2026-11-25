@@ -13,6 +13,8 @@ disable-model-invocation: true
 
 **Required**: First read `../speckit-grill-me/SKILL.md` in full and follow its instructions.
 
+Include decision points found in knowledge sources in the base workflow’s matching steps. The [decision matching procedure](../speckit-grill-me/references/decision-matching.md) uses the sibling `speckit-grill-me` directory as `skill_dir`. Track spec and knowledge updates under the same session ID and use the source authority rules below to handle conflicts.
+
 Run the sibling `speckit-grill-me` skill as the **base workflow**. Its language rules, prerequisites, extension hooks, glossary, interview discipline, interrupted completion path, Workflow Steps 1–8, behavior rules, artifacts, and completion conditions all remain in force. Terms used here—including decision point, decision-point status, question candidate pool, frontier, round, design tree, coverage map, request map, core and derived decisions, settlement by consequence, and grounded and agent-introduced elements—have the meanings defined by the base skill.
 
 This skill adds exactly one responsibility: **immediately persist canonical terminology settled during the interview, together with qualifying project-wide business-domain and technical-architecture decisions, to ordinary Markdown documents.** Do not use Serena or `.serena/`, and do not assume either is available.
@@ -118,12 +120,12 @@ A decision passes the recording gate only when all three conditions hold: (1) re
 
 Updating the spec and the knowledge documents is not a single transaction. If saving or verifying one side of the spec-and-knowledge update, one side of the topic-document-and-`CONTEXT_FILE`-index update, or one side of a new-and-superseded ADR update fails, attach the auxiliary state **Persistence incomplete** to the affected decision point and stop.
 
-Persistence incomplete is not a base decision-point status. If the point was already Resolved, including before a post-confirmation consequence update, preserve its settled value separately and return both its design-tree node and coverage status to Partial in the same operation. Keep the design-tree and coverage-map status Partial until every required file has been saved and verified; do not change it to Resolved.
+Persistence incomplete is not a base decision-point status. If the point was already Resolved, including before a post-confirmation consequence update, preserve its settled value separately, set the same ID to Partial, reopen its tree node, and recalculate coverage for every linked category and goal facet. Keep the design-tree and coverage-map status Partial until every required file has been saved and verified; do not change it to Resolved.
 
-- On stopping, report the affected decision point, settled content, files already saved and verified, files not yet updated or verified, failure details, and the next recovery operation.
-- On resumption, save and verify the incomplete side before asking a new question. Reread the saved side as well and check for duplicates or new conflicts.
-- In a new session, compare the latest Clarifications with the related knowledge documents. If the missing side can be reconstructed uniquely, apply it; otherwise, do not guess and ask the user.
-- While any Persistence incomplete state remains, do not proceed to a new question, rescan, satisfaction gate, or ordinary completion report. If the user asks to interrupt, report recovery information and stop rather than taking the normal interrupted completion path.
+- On stopping, report the affected decision point, settled content, files already saved and verified, files not yet updated or verified, failure details, and the next recovery operation. For a consequence, include whether the user confirmed it at Step 6.
+- On resumption, read back the affected files, check for duplicates or conflicts, and complete only the missing writes and verifications.
+- In a new session, identify the affected decision by its target and scope in the saved spec and related knowledge documents. Check the relevant Clarifications entry for a direct answer. For a derived requirement, check the cited premises and whether the user confirmed it at Step 6, using the recovery report or prior conversation if available. Apply and verify the missing update when its content and acceptance are clear. Confirm the intended update with the user if the accepted content is uncertain or the sources conflict.
+- During recovery, ask only for clarification needed to repair the affected item. Once every required artifact has been verified against the accepted result, mark the point Resolved, clear Persistence incomplete, and resume the workflow. If the user asks to interrupt, report recovery information and stop rather than taking the normal interrupted completion path.
 
 ## Additional in-session discipline
 
