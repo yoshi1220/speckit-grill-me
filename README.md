@@ -30,9 +30,15 @@ All variants target macOS / Linux + Bash and require a Spec Kit project containi
 
 The language and backend variants reuse the same two skill names. Install only one variant of each skill name in a given skill-discovery root; treat the alternatives as replacements, not as side-by-side skills.
 
+## Decision matching in 1.0.3
+
+All eight variants can run the interview without Python. When Python 3 is available, the default TF-IDF matcher uses only the standard library to shortlist related decisions. If Python is unavailable, the interview compares the source passages directly. In either case, a question keeps its session ID across goals and rescans when the source confirms the same decision and scope.
+
+To find paraphrases using learned embeddings, install `model2vec` in the Python environment and set `GRILL_ME_VECTOR_MODEL` to a local model directory suited to the specification’s language.
+
 ## Community Extension
 
-[`spec-kit-extension`](spec-kit-extension/) packages the English, Serena-independent workflows as the Spec Kit Community Extension `grill`. Release 1.0.2 provides two commands:
+[`spec-kit-extension`](spec-kit-extension/) packages the English, Serena-independent workflows as the Spec Kit Community Extension `grill`. It provides two commands.
 
 - `speckit.grill.me` — exhaustive specification clarification
 - `speckit.grill.with-docs` — clarification plus canonical Markdown knowledge synchronization

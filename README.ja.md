@@ -28,9 +28,15 @@ SpecKit Grill Me は、実装計画へ進む前に機能仕様の曖昧さと未
 
 言語とバックエンドが異なる版でも同じ 2 つの Skill 名を使います。同じ Skill 探索ルートには、各 Skill 名につき 1 つの版だけをインストールしてください。各版は併用するものではなく、用途に応じて置き換える選択肢です。
 
+## 1.0.3 の論点照合
+
+全8版とも、Python がなくても面談を進められます。Python 3 が使える場合は、標準ライブラリだけで TF-IDF を計算し、同じ論点の候補を絞ります。Python が使えない場合は、仕様の原文を直接照合します。どちらの場合も、決定対象と適用範囲が一致すれば、目標をまたぐときや再スキャン時にも同じ論点 ID を使います。
+
+言い換えの候補も学習済みモデルで探したい場合は、Python 環境に `model2vec` をインストールし、`GRILL_ME_VECTOR_MODEL` に仕様の言語に適したローカルモデルのディレクトリを指定してください。
+
 ## Community Extension
 
-[`spec-kit-extension`](spec-kit-extension/) は、英語・Serena 非依存版を Spec Kit Community Extension `grill` として配布します。リリース 1.0.2 では次の 2 コマンドを提供します。
+[`spec-kit-extension`](spec-kit-extension/) は、英語・Serena 非依存版を Spec Kit Community Extension `grill` として配布します。次の 2 コマンドを提供します。
 
 - `speckit.grill.me` — 仕様の徹底的な明確化
 - `speckit.grill.with-docs` — 明確化と正準 Markdown 知識の同期
