@@ -17,7 +17,7 @@ EDGE = "Edge cases and failure handling"
 
 
 def invoke(*args, batch=None):
-    return subprocess.run([sys.executable, str(HELPER), *map(str, args)],
+    return subprocess.run([sys.executable, "-B", str(HELPER), *map(str, args)],
                           input=json.dumps(batch), capture_output=True, text=True)
 
 
@@ -138,6 +138,25 @@ class Interview(unittest.TestCase):
         self.assertEqual(self.run_ok("show")["dependency_ready"], ["D002"])
         self.apply(resolve("D002", "Recorded (FR-2)."), reviewed=["D003"])
         self.assertEqual(self.run_ok("show")["dependency_ready"], ["D003"])
+
+    def test_match_uses_live_nodes_and_earlier_findings_without_writing(self):
+        incoming = [{"id": "N1", "text": "Refund approval before settlement"},
+                    {"id": "N2", "text": "Approval of refunds before settlement"}]
+        initial = self.run_ok("match", batch=incoming)
+        self.assertEqual(initial["neighbors"]["N1"], [])
+        self.assertEqual(initial["neighbors"]["N2"][0]["id"], "N1")
+
+        self.apply(new("D001", "Refund approval", "Before settlement", FUNCTIONAL))
+        original = self.graph.read_bytes()
+        match = self.run_ok("match", batch=incoming)
+        self.assertEqual(match["revision"], self.revision)
+        self.assertEqual(match["neighbors"]["N1"][0]["id"], "D001")
+        self.assertEqual(self.graph.read_bytes(), original)
+        self.apply({"id": "D001", "categories": [FUNCTIONAL, EDGE]})
+        stale = invoke("apply", self.graph, batch={"revision": match["revision"],
+                       "points": [new("D002", "Refund deadline", "After settlement", EDGE)]})
+        self.assertNotEqual(stale.returncode, 0)
+        self.assertIn("stale", stale.stderr)
 
     def test_pending_snapshots_and_interruption(self):
         self.assertTrue(self.run_ok("check", "--interrupted")["complete"])

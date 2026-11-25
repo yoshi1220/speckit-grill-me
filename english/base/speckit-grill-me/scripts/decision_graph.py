@@ -204,7 +204,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("init", help="create a private session and print its GraphML path")
-    for name in ("show", "apply", "descendants", "check", "close"):
+    for name in ("show", "match", "apply", "descendants", "check", "close"):
         sub = commands.add_parser(name)
         sub.add_argument("graph", type=Path)
         if name == "descendants":
@@ -228,7 +228,7 @@ def main():
             or path.parent.parent.resolve() != Path("/tmp").resolve()
             or path.is_symlink() or path.parent.is_symlink()):
         raise ValueError("use the session path returned by init")
-    batch = json.load(sys.stdin) if args.command == "apply" else None
+    batch = json.load(sys.stdin) if args.command in {"apply", "match"} else None
     # Keep the lock stable across atomic graph replacements by locking the session directory.
     directory = os.open(path.parent, os.O_RDONLY)
     try:
@@ -254,11 +254,18 @@ def main():
                 if pending or (not nodes and not args.interrupted):
                     raise ValueError(f"incomplete coverage; open or unreviewed: {pending}")
                 result = {"revision": revision, "complete": True}
-            else:
+            elif args.command == "show":
                 result = overview(nodes, revision, review, order)
-        print(json.dumps(result, ensure_ascii=False))
     finally:
         os.close(directory)
+
+    if args.command == "match":
+        from decision_neighbors import neighbors
+
+        known = [{"id": point_id, "text": point["target"] + "\n" + point["scope"]}
+                 for point_id, point in nodes.items()]
+        result = {"revision": revision, **neighbors({"known": known, "incoming": batch})}
+    print(json.dumps(result, ensure_ascii=False))
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ python3 "$helper" show "$session"
 
 ## Record the scan
 
-Use one node per independent decision, including points already Clear. Before allocating the next unused ID, compare its target and scope with every existing node and with other new points in the batch. The helper rejects exact duplicate target/scope pairs across categories. The interviewer judges paraphrases against the spec. A point may appear under several categories while keeping one ID, one answer and one status.
+Use one node per independent decision, including points already Clear. Before allocating IDs, run [vector matching](decision-matching.md) on the incoming batch. Use the returned revision when applying the reviewed decisions. The helper rejects exact duplicate target/scope pairs across categories. The interviewer judges paraphrases against the spec. A point may appear under several categories while keeping one ID, one answer and one status.
 
 Send JSON on standard input to `apply`. Supply the revision from the latest read or successful write. Each batch commits all changes together. A stale revision or invalid batch leaves the graph intact. On failure, read it again and reconcile the outstanding changes with the saved spec before retrying.
 
